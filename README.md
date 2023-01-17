@@ -20,6 +20,8 @@ The aim of this project will be to see if we can explain the population dynamics
 ## Requirements
 * Python 3.9+
 * mesa
+* mesa-geo
+* geojson
 
 
 ## Repository structure
