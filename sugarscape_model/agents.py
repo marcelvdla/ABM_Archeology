@@ -21,12 +21,12 @@ class PeopleAgent(Agent):
     
     def amo_sugar(self, pos):
         cells = self.model.grid.get_cell_list_contents([pos])
-        for agent in cells:
-            print("agent-----", type(agent))
-            if type(agent) is Sugar:
-                print("------", type(agent), "--", agent.amount, "-------")
-                return agent.amount
-            else: return 0
+        if len(cells) > 0:
+            for agent in cells:
+                if isinstance(agent, Sugar):
+                    return agent.amount
+                else: return 0
+        else: return 0
 
     def move(self):
         # Get neighborhood within vision
@@ -40,14 +40,16 @@ class PeopleAgent(Agent):
         self.model.grid.move_agent(self, random.choice(possible_moves))
 
     def take(self):
-        gold_patch = self.amo_sugar(self.pos)
-        self.sugar += gold_patch.amount
-        gold_patch.amount = 0
-        self.model.grid.remove_agent(gold_patch)
+        cells = self.model.grid.get_cell_list_contents([self.pos])
+        gold_patches = [obj for obj in cells if isinstance(obj, Sugar)]
+        if len(gold_patches)>0:
+            gold_patch = gold_patches[0]
+            self.sugar += gold_patch.amount
+            gold_patch.amount = 0
+            self.model.grid.remove_agent(gold_patch)
 
     def step(self):
         self.move()
         self.take()
 
     # When do you remove agent - people ?????
-

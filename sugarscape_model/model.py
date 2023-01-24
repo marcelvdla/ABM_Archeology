@@ -17,7 +17,8 @@ class Sugarscape(Model):
         self.grid = MultiGrid(width=width, height=height, torus=True)
         self.schedule = RandomActivation(self)
         self.datacollector = DataCollector(
-            {"Gold": lambda m: self.count_type(m, "Gold")}
+            {"PeopleAgent": lambda m: m.schedule.get_agent_count(),
+            "Sugar": lambda m: m.schedule.get_agent_count()}
         )
         agent_id = 0
 
@@ -37,7 +38,7 @@ class Sugarscape(Model):
             x = random.randrange(self.width)
             y = random.randrange(self.height)
             init_gold = random.randint(1,4)
-            vision = random.randrange(1,4)
+            vision = 1 # random.randrange(1,4)
             people = PeopleAgent(agent_id, (x,y), self, False, init_gold, vision)
             agent_id += 1
             self.grid.place_agent(people, (x,y))
@@ -46,5 +47,12 @@ class Sugarscape(Model):
     def step(self):
         self.schedule.step()
         self.datacollector.collect(self) # need data ?
+
+    def run_model(self, step_count=20):
+        '''
+        Method that runs the model for a specific amount of steps.
+        '''
+        for i in range(step_count):
+            self.step()
 
     # ------------------------------------------------------------
