@@ -1,26 +1,12 @@
 import mesa 
 import mesa_geo as mg
 
-class VictoriaAgent(mg.GeoAgent):
-    def __init__(self, unique_id, model, geometry, crs, agent_type=None):
-        """Create new agent
-        Args:
-            id: Unique identifier for the agent.
-            agent_type: Indicator for the agent's type (miner/farmer/trader)
-        """
-
-        super().__init__(unique_id, model, geometry, crs)
-        self.atype = agent_type
-
-    def step(self):
-        ## Implement step method
-        pass
+from agents import VictoriaAgent
 
 class GeoVictoria(mesa.Model):
     """ Model class for the Victoria Gold rush model """
 
     def __init__(self):
-
         self.schedule = mesa.time.RandomActivation(self)
         self.space = mg.GeoSpace(warn_crs_conversion=False)
         self.running = True
@@ -28,7 +14,17 @@ class GeoVictoria(mesa.Model):
         ac = mg.AgentCreator(VictoriaAgent, model=self)
         agents = ac.from_file("Shapefiles/victoria_hex.geojson")
         self.space.add_agents(agents)
+
+        for agent in agents:
+            self.schedule.add(agent)
     
     def step(self):
-        ## Implement step
-        pass
+        self.schedule.step()
+        # self.datacollector.collect(self) # need data ?
+
+    # def run_model(self, step_count=20):
+    #     '''
+    #     Method that runs the model for a specific amount of steps.
+    #     '''
+    #     for i in range(step_count):
+    #         self.schedule.step()
