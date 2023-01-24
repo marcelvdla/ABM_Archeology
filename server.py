@@ -6,6 +6,17 @@ from model import GeoVictoria
 import requests
 import json
 
+class Sched(mesa.visualization.TextElement):
+    """
+    Display a text count of how many happy agents there are.
+    """
+
+    def __init__(self):
+        pass
+
+    def render(self, model):
+        return "Number of possible agents: " + str(model.schedule.get_agent_count())
+
 # Define model parameters
 model_params = {
 }
@@ -21,6 +32,8 @@ def victoria_draw(agent):
         portrayal["color"] = "Yellow"
     elif agent.atype == "Miner":
         portrayal["color"] = "Red"
+    elif agent.atype == "Settled":
+        portrayal["color"] = "Blue"
     return portrayal
 
 map_element = mg.visualization.MapModule(

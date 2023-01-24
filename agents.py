@@ -20,23 +20,22 @@ class VictoriaAgent(mg.GeoAgent):
             self.atype = "Miner" 
             
     def step(self):
-        neighbors = self.model.space.get_neighbors(self)
         if self.atype == "Miner":
+            neighbors = list(self.model.space.get_neighbors_within_distance(self, distance=2))
             # If already next to goldmine don't move
             for n in neighbors:
-                if n.atype == "Gold":
-                    self.model.schedule.remove(self)
-                    return None
+                if n != self:
+                    if n.atype == "Gold":
+                        self.atype = "Settled"
+                        return
 
-            # Get neighborhood within vision, only finds land
+            # Find possible movement
             possible_steps = [move for move in neighbors if move.atype == "Land"]
             # Move to a random neighboring land and change agent 
             if len(possible_steps) > 0:
                 move_to = random.choice(possible_steps)
                 move_to.atype = self.atype
-                # self.model.schedule.add(move_to)
                 self.atype = "Land"
-            # self.model.schedule.remove(self)
 
 class Gold(VictoriaAgent):
     pass
