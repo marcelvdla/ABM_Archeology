@@ -25,7 +25,11 @@ def victoria_draw(agent):
     """
     Portrayal Method for canvas
     """
-    portrayal = dict()
+    portrayal = {
+        "description":(f"Agent type: {agent.atype}", f"ID: {agent.unique_id}"),
+        "weight":2
+    }
+
     if agent.atype == "Land":
         portrayal["color"] = "Grey"
     elif agent.atype == "Gold":
