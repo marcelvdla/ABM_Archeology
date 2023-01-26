@@ -26,7 +26,7 @@ def victoria_draw(agent):
     Portrayal Method for canvas
     """
     portrayal = {
-        "description":(f"Agent type: {agent.atype}", f"ID: {agent.unique_id}"),
+        "description":(f"Agent type: {agent.atype}", f"ID: {agent.unique_id}", f"tell: {agent.tell}"),
         "weight":2
     }
 
