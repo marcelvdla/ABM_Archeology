@@ -7,7 +7,7 @@ class GeoVictoria(mesa.Model):
     """ Model class for the Victoria Gold rush model """
 
     def __init__(self):
-        self.schedule = mesa.time.RandomActivation(self)
+        self.schedule = mesa.time.SimultaneousActivation(self)
         self.space = mg.GeoSpace(warn_crs_conversion=False)
         self.running = True
 
@@ -22,6 +22,7 @@ class GeoVictoria(mesa.Model):
     
     def step(self):
         self.schedule.step()
+        self.schedule.advance()
         # self.datacollector.collect(self) # need data ?
 
     # def run_model(self, step_count=20):

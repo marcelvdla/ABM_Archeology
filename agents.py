@@ -55,6 +55,10 @@ class VictoriaAgent(mg.GeoAgent):
                 for k in n.gold_loc.keys():
                     self.gold_loc[k] = n.gold_loc[k] + 1
 
+    # dummy advance function
+    def advance(self):
+        return super().advance()
+
 
 ## Suggestion for moving agents as separate class:
 class MovingAgent(VictoriaAgent):
