@@ -11,6 +11,8 @@ class GeoVictoria(mesa.Model):
         self.space = mg.GeoSpace(warn_crs_conversion=False)
         self.running = True
 
+        self.minelist = []
+
         ac = mg.AgentCreator(VictoriaAgent, model=self)
         agents = ac.from_file("Shapefiles/victoria_hex.geojson")
         self.space.add_agents(agents)

@@ -34,10 +34,13 @@ def victoria_draw(agent):
         portrayal["color"] = "Grey"
     elif agent.atype == "Gold":
         portrayal["color"] = "Yellow"
-    elif agent.atype == "Miner":
-        portrayal["color"] = "Red"
-    elif agent.atype == "Settled":
-        portrayal["color"] = "Blue"
+
+    if agent.gold_loc != {} and agent.atype != "Gold":
+        portrayal["color"] = "Green"
+    # elif agent.atype == "Miner":
+    #     portrayal["color"] = "Red"
+    # elif agent.atype == "Settled":
+    #     portrayal["color"] = "Blue"
     return portrayal
 
 map_element = mg.visualization.MapModule(
