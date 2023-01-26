@@ -1,5 +1,6 @@
 import mesa
 import mesa_geo as mg
+import matplotlib
 
 from model import GeoVictoria
 
@@ -26,7 +27,15 @@ def victoria_draw(agent):
     Portrayal Method for canvas
     """
     portrayal = {
-        "description":(f"Agent type: {agent.atype}", f"ID: {agent.unique_id}", f"tell: {agent.tell}"),
+        "description":(
+            f"Agent type: {agent.atype}", 
+            f"ID: {agent.unique_id}", 
+            f"tell: {agent.tell}",
+            f"miners: {agent.miners}",
+            f"non-miners: {agent.nonminers}",
+            f"resources: {round(agent.resources)}",
+            f"gold_resource: {agent.gold_resource}"
+            ),
         "weight":2
     }
 
@@ -45,8 +54,39 @@ def victoria_draw(agent):
     #     portrayal["color"] = "Blue"
     return portrayal
 
+def victoria_pop(agent):
+    color_dict = {
+        5: "#030303",
+        4: "#333333",
+        3: "#666666",
+        2: "#B3B3B3",
+        1: "#E5E5E5"
+    }
+
+    portrayal = {
+        "description":(
+            f"Agent type: {agent.atype}", 
+            f"ID: {agent.unique_id}", 
+            f"tell: {agent.tell}",
+            f"miners: {agent.miners}",
+            f"non-miners: {agent.nonminers}",
+            f"resources: {round(agent.resources)}",
+            f"gold_resource: {agent.gold_resource}"
+            ),
+        "weight":2
+    }
+    
+    population = agent.miners + agent.nonminers
+    if int(population/30) > 5 : col = 5 
+    elif int(population/30) < 1: col = 1
+    else: col = int(population/30)
+    portrayal["color"] = color_dict[col]
+
+    return portrayal
+
+
 map_element = mg.visualization.MapModule(
-    victoria_draw, [-37,145], 7, 1000, 750)
+    victoria_pop, [-37,145], 7, 1000, 750)
 server = mesa.visualization.ModularServer(
     GeoVictoria, [map_element], "Victoria", model_params
 )

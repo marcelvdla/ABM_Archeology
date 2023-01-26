@@ -1,5 +1,6 @@
 import mesa_geo as mg
 import random
+import numpy
 import sys
 
 class VictoriaAgent(mg.GeoAgent):
@@ -12,9 +13,11 @@ class VictoriaAgent(mg.GeoAgent):
         super().__init__(unique_id, model, geometry, crs)
         # Gold location dictionary with elements unique_id:distance, path
         self.gold_loc = {}
-        self.miners = 0.1
-        self.resources = 100
+        self.miners = 0
+        self.resources = random.randint(20,200)
         self.gold_resource = 10
+        self.nonminers = 80
+        
         self.tell = 0
         self.atype = "Land"
         
@@ -26,11 +29,36 @@ class VictoriaAgent(mg.GeoAgent):
         if atype == "Gold":
             self.atype = "Gold"
             self.gold_loc['unique_id'] = 0
+            self.miners = 20
             self.tell += 1
         # else:
         #     self.atype = "Miner"
+                
 
     def step(self):
+        # total population
+        population = self.miners + self.nonminers
+
+        # people move if the resources are less
+        if self.resources < population:
+            neighbors = list(self.model.space.get_neighbors_within_distance(self, distance=2))
+
+            possible_steps = [move for move in neighbors if (move.resources - (move.miners + move.nonminers)) > self.resources]
+
+            if len(possible_steps) > 0:
+                # moving people
+                diff = population - self.resources
+                people_moving = int(numpy.random.normal(loc=diff, scale=1))
+
+                # every excess miner/nonminer moves to a random neighbor
+                for _ in range(people_moving):
+                    move_to = random.choice(possible_steps)
+                    # miners are the first to move
+                    if self.miners > 0:
+                        self.miners -= 1
+                    else: self.nonminers -= 1
+                    move_to.nonminers += 1
+
         # Get neighbors
         neighbors = list(self.model.space.get_neighbors_within_distance(self, distance=2))
 
@@ -67,9 +95,12 @@ class VictoriaAgent(mg.GeoAgent):
             elif self.tell == 1:
                 self.tell += 1
 
-    # dummy advance function
+    # advance function
     def advance(self):
-        return
+        self.resources -= (self.miners + self.nonminers)
+        if self.resources < 0 : self.resources = 0
+        # self.resources += numpy.random.normal(loc=1, scale=0.2) * self.nonminers
+        self.resources += numpy.random.normal(loc=1, scale=0.2) * self.nonminers + numpy.random.normal(loc=1.1, scale=0.2) * self.miners 
 
 
 ## Suggestion for moving agents as separate class:
