@@ -65,6 +65,10 @@ class VictoriaAgent(mg.GeoAgent):
             elif self.tell == 1:
                 self.tell += 1
 
+    # dummy advance function
+    def advance(self):
+        return super().advance()
+
 
 ## Suggestion for moving agents as separate class:
 class MovingAgent(VictoriaAgent):
