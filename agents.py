@@ -3,7 +3,7 @@ import random
 import sys
 
 class VictoriaAgent(mg.GeoAgent):
-    def __init__(self, unique_id, model, geometry, crs, agent_type=None):
+    def __init__(self, unique_id, model, geometry, crs, atype=None):
         """Create new agent
         Args:
             id: Unique identifier for the agent.
@@ -15,13 +15,15 @@ class VictoriaAgent(mg.GeoAgent):
         self.miners = 0.1
         self.resources = 100
         self.gold_resource = 10
-        
         self.tell = 0
+        self.atype = "Land"
+        
+    def set_type(self, atype):
         # Randomly create goldmines
-        n = random.random() 
-        if self.unique_id != 41: #n < 0.99:
-            self.atype = "Land"
-        else: #if n < 0.85:
+        # n = random.random() 
+        self.atype = atype
+
+        if atype == "Gold":
             self.atype = "Gold"
             self.gold_loc['unique_id'] = 0
             self.tell += 1
@@ -67,7 +69,7 @@ class VictoriaAgent(mg.GeoAgent):
 
     # dummy advance function
     def advance(self):
-        return super().advance()
+        return
 
 
 ## Suggestion for moving agents as separate class:

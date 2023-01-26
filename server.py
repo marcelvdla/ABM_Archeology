@@ -34,6 +34,8 @@ def victoria_draw(agent):
         portrayal["color"] = "Grey"
     elif agent.atype == "Gold":
         portrayal["color"] = "Yellow"
+    elif agent.atype == "Road":
+        portrayal["color"] = "Red"
 
     if agent.gold_loc != {} and agent.atype != "Gold":
         portrayal["color"] = "Green"
