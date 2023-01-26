@@ -16,7 +16,7 @@ class VictoriaAgent(mg.GeoAgent):
         self.resources = 100
         self.gold_resource = 10
         
-        
+        # Randomly create goldmines
         n = random.random() 
         if n < 0.99:
             self.atype = "Land"
@@ -56,8 +56,8 @@ class VictoriaAgent(mg.GeoAgent):
                     self.gold_loc[k] = n.gold_loc[k] + 1
 
 
-class Gold(VictoriaAgent):
-    pass
-
-class Miner(VictoriaAgent):
-    pass
+## Suggestion for moving agents as separate class:
+class MovingAgent(VictoriaAgent):
+    def __init__(self, agentproperties):
+        ## To Do give agent a goal node, make it move every x steps
+        pass
