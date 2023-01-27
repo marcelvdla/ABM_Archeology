@@ -75,7 +75,7 @@ def victoria_pop(agent):
             f"miners: {agent.miners}",
             f"non-miners: {agent.nonminers}",
             f"resources: {round(agent.resources)}",
-            f"gold_resource: {agent.gold_resource}"
+            f"gold_resource: {agent.gold}"
             ],
         "weight":2
     }
@@ -95,7 +95,7 @@ def victoria_pop(agent):
 
 
 map_element = mg.visualization.MapModule(
-    victoria_draw, [-37,145], 7, 1000, 750)
+    victoria_pop, [-37,145], 7, 1000, 750)
 server = mesa.visualization.ModularServer(
     GeoVictoria, [map_element], "Victoria", model_params
 )
