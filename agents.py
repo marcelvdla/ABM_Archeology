@@ -17,6 +17,8 @@ class VictoriaAgent(mg.GeoAgent):
         self.resources = random.randint(20,200)
         # initial amount of gold available
         self.gold = 0
+        # exchange rate i.e. how many resources one gold piece buys
+        self.exchange = 5
         # func of gold and resources the people own and number of people
         self.economic_opportunity = 0 
         # list with agent dictionaries
@@ -60,6 +62,24 @@ class VictoriaAgent(mg.GeoAgent):
             self.agents.append(agent)
             # global agent_id += 1
 
+
+    def calc_econ_opp(self):
+        """
+        function to calculate the economic opportunity in a cell as a function
+        of the freely available resources, the resources owned by other agents
+        and the number of agents in that cell.
+        
+        This value is used to determine where non miners move to.
+        """
+        total_wealth = 0
+        
+        for agent in self.agents:
+            total_wealth += agent['resources'] + agent['gold']*self.exchange
+            
+        opp = (self.resources + total_wealth)/self.population
+        self.economic_opportunity = opp
+        
+        
     
     # def trade_and_move(self):
     #     for agent in self.agents:
