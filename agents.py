@@ -87,7 +87,9 @@ class VictoriaAgent(mg.GeoAgent):
                 self.resources -= 1
 
     def step(self):
-
+        # agents farm, mine
+        # agents move
+        # agents trade
         self.make_people(self) # should only be in the first step
 
         self.trade_and_move(self)
