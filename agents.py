@@ -14,7 +14,7 @@ class VictoriaAgent(mg.GeoAgent):
         # initial agents to be created in this cell
         self.init_population = 10
         # amount of resources intially available to be collected
-        self.resources = random.randint(20,200)
+        self.resources = random.randint(20,50)
         # initial amount of gold available
         self.gold = 0
         # exchange rate i.e. how many resources one gold piece buys
@@ -28,8 +28,11 @@ class VictoriaAgent(mg.GeoAgent):
         
         self.tell = 0
         self.atype = "Land"
+       
         
-        
+################# Functions Alterring Cell Properties #########################
+
+
     def set_type(self, atype):
         # Randomly create goldmines
         # n = random.random() 
@@ -78,8 +81,39 @@ class VictoriaAgent(mg.GeoAgent):
             
         opp = (self.resources + total_wealth)/self.population
         self.economic_opportunity = opp
+    
+    
+    def resource_regrowth(self):
+        """
+        Increase the resources of a cell by a randomly fluctuating amount
+        """
+        self.resoruces += random.randint(5,10)
+    
+    
+    def information_spread(self):
+        neighbors = list(self.model.space.get_neighbors_within_distance(self, distance=2))
+
+        if self.atype == "Gold" and self.tell:
+            # Tell neighbors I have gold
+            for n in neighbors:
+                n.gold_loc[self.unique_id] = [1, self.gold, self.unique_id]
+                n.tell += 1
+                self.tell = -1
+        elif self.atype == "Land":
+            # Check if I can tell neighbors where gold is
+            if self.tell == 2:
+                for n in neighbors:
+                    if n.tell == 0:
+                        n.tell += 1
+                        for k in self.gold_loc.keys():
+                            n.gold_loc[k] = [self.gold_loc[k][0] + 1, self.gold_loc[k][1], self.unique_id]
+
+
         
         
+############### Functions Determining Actions of Indiviudals ##################
+
+
     def consume_resources(self):
         """
         Every agent within the cell consumes one of his resources and dies
@@ -97,9 +131,43 @@ class VictoriaAgent(mg.GeoAgent):
                 # delete agent
                 dead_agent_count += 1
             
-    
-                    
-    
+
+
+
+####################### Functions Advancing the Model ########################
+
+    def step(self):
+
+        self.make_people() # should only be in the first step
+
+        self.information_spread()
+        
+        # check if people become miners
+        # perform action either farm or mine or nothing
+        self.resource_regrowth()
+        self.calc_econ_opp()
+        # move (miners to mine, other to higher economic opp)
+        # trade
+        self.consume_resources() # unfinished function
+        # replace dead agents randomly in new cells
+
+    # advance function
+    def advance(self):
+        self.population = len(self.agents) # update population
+
+        self.resources -= (self.miners + self.nonminers)
+        if self.resources < 0 : self.resources = 0
+        # self.resources += numpy.random.normal(loc=1, scale=0.2) * self.nonminers
+        self.resources += numpy.random.normal(loc=1, scale=0.2) * self.nonminers + numpy.random.normal(loc=1.1, scale=0.2) * self.miners 
+
+        if self.atype == "Land" and self.tell == 1:
+            neighbors = list(self.model.space.get_neighbors_within_distance(self, distance=2))
+            for n in neighbors:
+                if n.tell == 1:
+                    n.tell += 1
+
+
+############################## Old Functions #################################
     # def trade_and_move(self):
     #     for agent in self.agents:
     #         total_resources += agent["resource"]
@@ -132,24 +200,6 @@ class VictoriaAgent(mg.GeoAgent):
     #             self.resources -= 1
 
 
-    def information_spread(self):
-        neighbors = list(self.model.space.get_neighbors_within_distance(self, distance=2))
-
-        if self.atype == "Gold" and self.tell:
-            # Tell neighbors I have gold
-            for n in neighbors:
-                n.gold_loc[self.unique_id] = [1, self.gold, self.unique_id]
-                n.tell += 1
-                self.tell = -1
-        elif self.atype == "Land":
-            # Check if I can tell neighbors where gold is
-            if self.tell == 2:
-                for n in neighbors:
-                    if n.tell == 0:
-                        n.tell += 1
-                        for k in self.gold_loc.keys():
-                            n.gold_loc[k] = [self.gold_loc[k][0] + 1, self.gold_loc[k][1], self.unique_id]
-
     # def random_move_miner(self):
     #     # Get neighbors
     #     neighbors = list(self.model.space.get_neighbors_within_distance(self, distance=2))
@@ -171,40 +221,3 @@ class VictoriaAgent(mg.GeoAgent):
     #             move_to.atype = self.atype
     #             self.atype = "Land"
 
-    def step(self):
-
-        self.make_people() # should only be in the first step
-
-        self.information_spread()
-        
-        # check if people become miners
-        # perform action either farm or mine or nothing
-        # regrow resources
-        self.calc_econ_opp()
-        # move (miners to mine, other to higher economic opp)
-        # trade
-        self.consume_resources() # unfinished function
-        # replace dead agents randomly in new cells
-
-    # advance function
-    def advance(self):
-        self.population = len(self.agents) # update population
-
-        self.resources -= (self.miners + self.nonminers)
-        if self.resources < 0 : self.resources = 0
-        # self.resources += numpy.random.normal(loc=1, scale=0.2) * self.nonminers
-        self.resources += numpy.random.normal(loc=1, scale=0.2) * self.nonminers + numpy.random.normal(loc=1.1, scale=0.2) * self.miners 
-
-        if self.atype == "Land" and self.tell == 1:
-            neighbors = list(self.model.space.get_neighbors_within_distance(self, distance=2))
-            for n in neighbors:
-                if n.tell == 1:
-                    n.tell += 1
-                    
-
-
-## Suggestion for moving agents as separate class:
-# class MovingAgent(VictoriaAgent):
-#     def __init__(self, agentproperties):
-#         ## To Do give agent a goal node, make it move every x steps
-#         pass
