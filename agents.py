@@ -13,10 +13,19 @@ class VictoriaAgent(mg.GeoAgent):
         super().__init__(unique_id, model, geometry, crs)
         # Gold location dictionary with elements unique_id:distance, path
         self.gold_loc = {}
-        self.miners = 0
+        self.init_population = 10
+        # self.miners = 0
         self.resources = random.randint(20,200)
-        self.gold_resource = 10
-        self.nonminers = 80
+        self.gold = 10
+        self.trade_opp = 0 # func of gold and resources the people own
+
+        # self.nonminers = 80
+
+        global agent_id 
+        agent_id = 0
+
+        self.agents = []
+        self.population = len(self.agents)
         
         self.tell = 0
         self.atype = "Land"
@@ -34,30 +43,54 @@ class VictoriaAgent(mg.GeoAgent):
         # else:
         #     self.atype = "Miner"
                 
+    def make_people(self):
+        for i in range(self.init_population):
+            agent = {
+                "id": agent_id,
+                "miner": False,
+                "gold": 0,
+                "resources": 10,
+                "risk_factor": 0.5
+            }
+            self.agents.append(agent)
+            # global agent_id += 1
+
+    def trade_and_move(self):
+        for agent in self.agents:
+            total_resources += agent["resource"]
+            if agent["miner"]:
+                if agent["resource"] < 2 and agent["gold"] > 0:
+                    # trade 1 gold for 5 resources
+                    for agent2 in self.agents:
+                        if agent2["id"] != agent["id"] and agent2["resource"] > 20:
+                            agent["resource"] += 5
+                            agent["gold"] -= 1
+                            agent2["resource"] -= 5
+                            agent2["gold"] += 1
+                            break
+                        else : 
+                            neighbors = list(self.model.space.get_neighbors_within_distance(self, distance=2))
+                            possible_steps = [move for move in neighbors if (move.resources > self.resources or move.trade_opp > self.trade_opp)]
+                            if len(possible_steps) > 0:
+                                move_to = random.choice(possible_steps)
+                                move_to.agents.append(agent)
+                                del agent
+
+            # is trading factor dependent on total_resources?
+            # maybe update trade opp ?
+
+            if agent.miner == True and self.gold > 0:
+                agent.gold += 1
+                self.gold -=1
+            elif agent.miner == False:
+                agent.resources += 1
+                self.resources -= 1
 
     def step(self):
-        # total population
-        population = self.miners + self.nonminers
 
-        # people move if the resources are less
-        if self.resources < population:
-            neighbors = list(self.model.space.get_neighbors_within_distance(self, distance=2))
+        self.make_people(self) # should only be in the first step
 
-            possible_steps = [move for move in neighbors if (move.resources - (move.miners + move.nonminers)) > self.resources]
-
-            if len(possible_steps) > 0:
-                # moving people
-                diff = population - self.resources
-                people_moving = int(numpy.random.normal(loc=diff, scale=1))
-
-                # every excess miner/nonminer moves to a random neighbor
-                for _ in range(people_moving):
-                    move_to = random.choice(possible_steps)
-                    # miners are the first to move
-                    if self.miners > 0:
-                        self.miners -= 1
-                    else: self.nonminers -= 1
-                    move_to.nonminers += 1
+        self.trade_and_move(self)
 
         # Get neighbors
         neighbors = list(self.model.space.get_neighbors_within_distance(self, distance=2))
@@ -95,6 +128,8 @@ class VictoriaAgent(mg.GeoAgent):
 
     # advance function
     def advance(self):
+        self.population = len(self.agents) # update population
+
         self.resources -= (self.miners + self.nonminers)
         if self.resources < 0 : self.resources = 0
         # self.resources += numpy.random.normal(loc=1, scale=0.2) * self.nonminers
