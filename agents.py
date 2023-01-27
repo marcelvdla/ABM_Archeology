@@ -153,6 +153,22 @@ class VictoriaAgent(mg.GeoAgent):
                 if gold_mined <= self.gold:
                     agent["gold"] += gold_mined
                     self.gold -= gold_mined
+    
+    def move(self):
+        
+        for agent in self.agents:
+            
+            if agent['miner'] == False:
+                # check neighbouring cells for highest economic oppportunity 
+                # move agent to that cell
+            
+            elif agent['miner'] == True:
+                if agent['destination'] == #current cell:
+                    #remain
+                else:
+                    # check next step towards gold mine
+                    # move agent to that cell
+        
             
             
 ####################### Functions Advancing the Model ########################
@@ -167,7 +183,7 @@ class VictoriaAgent(mg.GeoAgent):
         self.acquire_resources()
         self.resource_regrowth()
         self.calc_econ_opp()
-        # move (miners to mine, other to higher economic opp)
+        self.move() #very unfinished function
         # trade
         self.consume_resources() # unfinished function
         # replace dead agents randomly in new cells
