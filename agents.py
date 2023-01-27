@@ -27,6 +27,7 @@ class VictoriaAgent(mg.GeoAgent):
         self.tell = 0
         self.atype = "Land"
         
+        
     def set_type(self, atype):
         # Randomly create goldmines
         # n = random.random() 
@@ -40,7 +41,8 @@ class VictoriaAgent(mg.GeoAgent):
         # else:
         #     self.atype = "Miner"
                 
-    def make_people(self):
+        
+    def initialize_population(self):
         """
         create an intial population of agents within a cell (i.e. local environment)
         with a global agent ID to identify them as they move between cells.
@@ -91,8 +93,6 @@ class VictoriaAgent(mg.GeoAgent):
     #             self.resources -= 1
 
 
-        
-        self.trade_and_move(self)
     def information_spread(self):
         neighbors = list(self.model.space.get_neighbors_within_distance(self, distance=2))
 
@@ -165,7 +165,7 @@ class VictoriaAgent(mg.GeoAgent):
 
 
 ## Suggestion for moving agents as separate class:
-class MovingAgent(VictoriaAgent):
-    def __init__(self, agentproperties):
-        ## To Do give agent a goal node, make it move every x steps
-        pass
+# class MovingAgent(VictoriaAgent):
+#     def __init__(self, agentproperties):
+#         ## To Do give agent a goal node, make it move every x steps
+#         pass
