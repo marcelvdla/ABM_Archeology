@@ -132,9 +132,8 @@ class VictoriaAgent(mg.GeoAgent):
             if agent['resources'] > 0:
                 agent['resources'] -= 1
                 # self.resources -= 1
-            
             else:
-                # delete agent
+                del agent
                 dead_agent_count += 1
                 
                 
@@ -178,13 +177,30 @@ class VictoriaAgent(mg.GeoAgent):
                 leaving_prob = 0.4
                 if numpy.random.random() < leaving_prob:
                     agent['miner'] = True
-                    agent['destination'] = 0# cell ID extracted from loc
+                    agent['destination'] = 0 # cell ID extracted from loc
             
-    
+    def trade(self):
+        """
+        This function evaluates whether agents decide to trade based on 
+        their individual resources and gold, and the resources of other agents.
+        """
+        for agent in self.agents:
+            if agent["miner"]:
+                if agent["resources"] < 2 and agent["gold"] > 0:
+                    # trade gold with the echange rate
+                    for agent2 in self.agents:
+                        if agent2["id"] != agent["id"] and agent2["resources"] > 20:
+                            agent["resources"] += self.exchange
+                            agent["gold"] -= 1
+                            agent2["resources"] -= self.exchange
+                            agent2["gold"] += 1
+                            break
+                        else : # call move function or die ?
+                            del agent
+
     def move(self):
         
         for agent in self.agents:
-            
             if agent['miner'] == False:
                 continue
                 # check neighbouring cells for highest economic oppportunity 
@@ -199,7 +215,7 @@ class VictoriaAgent(mg.GeoAgent):
                     # check next step towards gold mine
                     # move agent to that cell
 
-            
+
 ####################### Functions Advancing the Model ########################
 
     def step(self):
@@ -222,8 +238,11 @@ class VictoriaAgent(mg.GeoAgent):
         self.move() # very unfinished function
         
         # trade between agents
+        self.trade()
+
         # agents consume resources or die if not in possession of any
         self.consume_resources() # unfinished function
+        
         # replace dead agents randomly in new cells
 
     # advance function
