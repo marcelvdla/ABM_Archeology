@@ -5,26 +5,23 @@ import sys
 
 class VictoriaAgent(mg.GeoAgent):
     def __init__(self, unique_id, model, geometry, crs, atype=None):
-        """Create new agent
-        Args:
-            id: Unique identifier for the agent.
-            agent_type: Indicator for the agent's type (miner/farmer/trader)
+        """
+        Create Local Environment containing resources and agents.
         """
         super().__init__(unique_id, model, geometry, crs)
         # Gold location dictionary with elements unique_id:distance, path
         self.gold_loc = {}
+        # initial agents to be created in this cell
         self.init_population = 10
-        # self.miners = 0
+        # amount of resources intially available to be collected
         self.resources = random.randint(20,200)
-        self.gold = 10
-        self.trade_opp = 0 # func of gold and resources the people own
-
-        # self.nonminers = 80
-
-        global agent_id 
-        agent_id = 0
-
+        # initial amount of gold available
+        self.gold = 0
+        # func of gold and resources the people own and number of people
+        self.trade_opp = 0 
+        # list with agent dictionaries
         self.agents = []
+        # number of agents, will be used to visualize population density
         self.population = len(self.agents)
         
         self.tell = 0
@@ -44,6 +41,10 @@ class VictoriaAgent(mg.GeoAgent):
         #     self.atype = "Miner"
                 
     def make_people(self):
+        """
+        create an intial population of agents within a cell (i.e. local environment)
+        with a global agent ID to identify them as they move between cells.
+        """
         for i in range(self.init_population):
             agent = {
                 "id": agent_id,
@@ -89,16 +90,7 @@ class VictoriaAgent(mg.GeoAgent):
     #             agent.resources += 1
     #             self.resources -= 1
 
-    def step(self):
-        self.make_people(self) # should only be in the first step
-        
-        # check if people become miners
-        # perform action either farm or mine or nothing
-        # consume or die
-        # replace dead agents randomly in new cells
-        # regrow qresources
-        # move (miners to mine, other to higher economic opp)
-        # trade
+
         
         self.trade_and_move(self)
     def information_spread(self):
@@ -119,34 +111,41 @@ class VictoriaAgent(mg.GeoAgent):
                         for k in self.gold_loc.keys():
                             n.gold_loc[k] = [self.gold_loc[k][0] + 1, self.gold_loc[k][1], self.unique_id]
 
-    def random_move_miner(self):
-        # Get neighbors
-        neighbors = list(self.model.space.get_neighbors_within_distance(self, distance=2))
+    # def random_move_miner(self):
+    #     # Get neighbors
+    #     neighbors = list(self.model.space.get_neighbors_within_distance(self, distance=2))
 
-        # Random movement of miners to agents
-        if self.atype == "Miner":
-            # If already next to goldmine don't move
-            for n in neighbors:
-                if n != self:
-                    if n.atype == "Gold":
-                        self.atype = "Settled"
-                        return
+    #     # Random movement of miners to agents
+    #     if self.atype == "Miner":
+    #         # If already next to goldmine don't move
+    #         for n in neighbors:
+    #             if n != self:
+    #                 if n.atype == "Gold":
+    #                     self.atype = "Settled"
+    #                     return
 
-            # Find possible movement
-            possible_steps = [move for move in neighbors if move.atype == "Land"]
-            # Move to a random neighboring land and change agent 
-            if len(possible_steps) > 0:
-                move_to = random.choice(possible_steps)
-                move_to.atype = self.atype
-                self.atype = "Land"
+    #         # Find possible movement
+    #         possible_steps = [move for move in neighbors if move.atype == "Land"]
+    #         # Move to a random neighboring land and change agent 
+    #         if len(possible_steps) > 0:
+    #             move_to = random.choice(possible_steps)
+    #             move_to.atype = self.atype
+    #             self.atype = "Land"
 
     def step(self):
 
         self.make_people(self) # should only be in the first step
 
-        self.trade_and_move(self)
-
         self.information_spread()
+        
+        # check if people become miners
+        # perform action either farm or mine or nothing
+        # consume or die
+        # replace dead agents randomly in new cells
+        # regrow qresources
+        # calculate economic opportunity
+        # move (miners to mine, other to higher economic opp)
+        # trade
 
     # advance function
     def advance(self):
