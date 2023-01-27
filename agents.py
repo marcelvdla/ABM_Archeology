@@ -62,7 +62,7 @@ class VictoriaAgent(mg.GeoAgent):
             self.agents.append(agent)
             # global agent_id += 1
 
-
+    
     def calc_econ_opp(self):
         """
         function to calculate the economic opportunity in a cell as a function
@@ -80,6 +80,25 @@ class VictoriaAgent(mg.GeoAgent):
         self.economic_opportunity = opp
         
         
+        def consume_resources(self):
+            """
+            Every agent within the cell consumes one of his resources and dies
+            if there are no resources at his exposal
+            """
+            # keep count of agents that die to create new agents
+            dead_agent_count = 0
+            
+            for agents in self.agents:
+                
+                if agent['resources'] > 0:
+                    agent['resources'] -= 1
+                
+                else:
+                    # delete agent
+                    dead_agent_count += 1
+            
+    
+                    
     
     # def trade_and_move(self):
     #     for agent in self.agents:
@@ -160,12 +179,12 @@ class VictoriaAgent(mg.GeoAgent):
         
         # check if people become miners
         # perform action either farm or mine or nothing
-        # consume or die
         # replace dead agents randomly in new cells
         # regrow qresources
         self.calc_econ_opp()
         # move (miners to mine, other to higher economic opp)
         # trade
+        # consume or die
 
     # advance function
     def advance(self):
