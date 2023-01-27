@@ -24,6 +24,7 @@ class GeoVictoria(mesa.Model):
             if agent.unique_id in list(start_state["unique_id"]):
                 index = start_state.index[start_state["unique_id"] == agent.unique_id][0]
                 agent.set_type(start_state["type"][index])
+            
             self.schedule.add(agent)
 
     def step(self):

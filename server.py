@@ -30,8 +30,6 @@ def victoria_draw(agent):
         "description":[
             f"Agent type: {agent.atype}", 
             f"ID: {agent.unique_id}",
-            f"miners: {agent.miners}",
-            f"non-miners: {agent.nonminers}",
             f"resources: {round(agent.resources)}",
             f"gold_resource: {agent.gold}"
         ],
@@ -72,8 +70,6 @@ def victoria_pop(agent):
             f"Agent type: {agent.atype}", 
             f"ID: {agent.unique_id}", 
             f"tell: {agent.tell}",
-            f"miners: {agent.miners}",
-            f"non-miners: {agent.nonminers}",
             f"resources: {round(agent.resources)}",
             f"gold_resource: {agent.gold}"
             ],
@@ -85,7 +81,7 @@ def victoria_pop(agent):
         t.append(f"path to gold: {list(agent.gold_loc.values())}")
         portrayal["description"] = t
     
-    population = agent.miners + agent.nonminers
+    population = agent.population
     if int(population/30) > 5 : col = 5 
     elif int(population/30) < 1: col = 1
     else: col = int(population/30)

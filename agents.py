@@ -47,7 +47,7 @@ class VictoriaAgent(mg.GeoAgent):
         #     self.atype = "Miner"
                 
         
-    def initialize_population(self):
+    def initialize_population(self, agent_id):
         """
         create an intial population of agents within a cell (i.e. local environment)
         with a global agent ID to identify them as they move between cells.
@@ -80,7 +80,8 @@ class VictoriaAgent(mg.GeoAgent):
         for agent in self.agents:
             total_wealth += agent['resources'] + agent['gold']*self.exchange
             
-        opp = (self.resources + total_wealth)/self.population
+        ## ADD ONE SMOOTHING TO AVOID DIVISION BY ZERO
+        opp = (self.resources + total_wealth)/(self.population +1)
         self.economic_opportunity = opp
     
     
@@ -88,7 +89,7 @@ class VictoriaAgent(mg.GeoAgent):
         """
         Increase the resources of a cell by a randomly fluctuating amount
         """
-        self.resoruces += random.randint(5,10)
+        self.resources += random.randint(5,10)
     
     
     def information_spread(self):
@@ -168,12 +169,12 @@ class VictoriaAgent(mg.GeoAgent):
         # iterate over agents
         for agent in self.agents:
             # iterate through all locations known in current cell
-            for loc in gold_loc:
+            for loc in self.gold_loc:
                 # calculate leaving probability
                 leaving_prob = 0.4
                 if numpy.random.random() < leaving_prob:
                     agent['miner'] = True
-                    agent['destination'] = # cell ID extracted from loc
+                    agent['destination'] = 0# cell ID extracted from loc
             
     
     def move(self):
@@ -181,13 +182,16 @@ class VictoriaAgent(mg.GeoAgent):
         for agent in self.agents:
             
             if agent['miner'] == False:
+                continue
                 # check neighbouring cells for highest economic oppportunity 
                 # move agent to that cell
             
             elif agent['miner'] == True:
-                if agent['destination'] == #current cell:
+                if agent['destination'] == 0:#current cell:
+                    continue
                     #remain
                 else:
+                    continue
                     # check next step towards gold mine
                     # move agent to that cell
         
@@ -196,8 +200,6 @@ class VictoriaAgent(mg.GeoAgent):
 ####################### Functions Advancing the Model ########################
 
     def step(self):
-
-        self.make_people() # should only be in the first step
 
         self.information_spread()
         
@@ -220,10 +222,11 @@ class VictoriaAgent(mg.GeoAgent):
     def advance(self):
         self.population = len(self.agents) # update population
 
-        self.resources -= (self.miners + self.nonminers)
+        # TO DO: CHANGE UPDATE RESOURCES 
+        # self.resources -= (self.miners + self.nonminers)
         if self.resources < 0 : self.resources = 0
         # self.resources += numpy.random.normal(loc=1, scale=0.2) * self.nonminers
-        self.resources += numpy.random.normal(loc=1, scale=0.2) * self.nonminers + numpy.random.normal(loc=1.1, scale=0.2) * self.miners 
+        # self.resources += numpy.random.normal(loc=1, scale=0.2) * self.nonminers + numpy.random.normal(loc=1.1, scale=0.2) * self.miners 
 
         if self.atype == "Land" and self.tell == 1:
             neighbors = list(self.model.space.get_neighbors_within_distance(self, distance=2))
