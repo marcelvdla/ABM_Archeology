@@ -45,7 +45,12 @@ class VictoriaAgent(mg.GeoAgent):
             self.tell += 1
         # else:
         #     self.atype = "Miner"
-                
+    
+    def get_neighbors(self, id=1):
+        if id:
+            return [n.unique_id for n in list(self.model.space.get_neighbors_within_distance(self, distance=2)) if n.unique_id != self.unique_id]
+        else:
+            return list(self.model.space.get_neighbors_within_distance(self, distance=2))
         
     def initialize_population(self, agent_id):
         """
@@ -92,25 +97,40 @@ class VictoriaAgent(mg.GeoAgent):
         self.resources += random.randint(5,10)
     
     
-    def information_spread(self):
+    def information_spread_step(self):
         neighbors = list(self.model.space.get_neighbors_within_distance(self, distance=2))
 
-        if self.atype == "Gold" and self.tell:
+        if self.atype == "Gold" and self.tell == 1:
             # Tell neighbors I have gold
             for n in neighbors:
-                n.gold_loc[self.unique_id] = [1, self.gold, self.unique_id]
-                n.tell += 1
-                self.tell = -1
-        elif self.atype == "Land":
+                if n != self:
+                    n.gold_loc[self.unique_id] = [1, self.gold, self.unique_id]
+                    n.tell += 1
+                    self.tell = -1
+        elif self.atype == "Land" and self.tell == 2:
             # Check if I can tell neighbors where gold is
-            if self.tell == 2:
-                for n in neighbors:
-                    if n.tell == 0:
-                        n.tell += 1
-                        for k in self.gold_loc.keys():
-                            n.gold_loc[k] = [self.gold_loc[k][0] + 1, self.gold_loc[k][1], self.unique_id]
+            for n in neighbors:
+                if n.tell == 0:
+                    n.tell += 1
+                    for k in self.gold_loc.keys():
+                        if k not in list(n.gold_loc.keys()):
+                            distance = self.gold_loc[k][0] + 1
+                            gold_size = self.gold_loc[k][1]
+                            n.gold_loc[k] = [distance, gold_size, self.unique_id]
 
+    def information_spread_advance(self):
+        neighbors = list(self.model.space.get_neighbors_within_distance(self, distance=2))
 
+        if self.atype == "Land" and self.tell == 1:
+            neighbors = list(self.model.space.get_neighbors_within_distance(self, distance=2))
+            knows = list(self.gold_loc.keys())
+            for n in neighbors:
+                n_knows = list(n.gold_loc.keys())
+                if n.tell == 1 and not any(k in n_knows for k in knows):
+                    n.tell += 1
+            self.tell += 1
+        elif self.atype == "Land" and self.tell == 2:
+            self.tell = 0
         
         
 ############### Functions Determining Actions of Indiviudals ##################
@@ -201,7 +221,7 @@ class VictoriaAgent(mg.GeoAgent):
 
     def step(self):
 
-        self.information_spread()
+        self.information_spread_step()
         
         # check if people become miners
         self.turn_miner() # unfinished function
@@ -227,12 +247,7 @@ class VictoriaAgent(mg.GeoAgent):
         if self.resources < 0 : self.resources = 0
         # self.resources += numpy.random.normal(loc=1, scale=0.2) * self.nonminers
         # self.resources += numpy.random.normal(loc=1, scale=0.2) * self.nonminers + numpy.random.normal(loc=1.1, scale=0.2) * self.miners 
-
-        if self.atype == "Land" and self.tell == 1:
-            neighbors = list(self.model.space.get_neighbors_within_distance(self, distance=2))
-            for n in neighbors:
-                if n.tell == 1:
-                    n.tell += 1
+        self.information_spread_advance()
 
 
 ############################## Old Functions #################################
