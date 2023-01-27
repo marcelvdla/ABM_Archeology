@@ -154,7 +154,7 @@ class VictoriaAgent(mg.GeoAgent):
 
     def step(self):
 
-        self.make_people(self) # should only be in the first step
+        self.make_people() # should only be in the first step
 
         self.information_spread()
         
@@ -163,7 +163,7 @@ class VictoriaAgent(mg.GeoAgent):
         # consume or die
         # replace dead agents randomly in new cells
         # regrow qresources
-        # calculate economic opportunity
+        self.calc_econ_opp()
         # move (miners to mine, other to higher economic opp)
         # trade
 
