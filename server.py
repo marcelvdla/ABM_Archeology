@@ -31,7 +31,9 @@ def victoria_draw(agent):
             f"Agent type: {agent.atype}", 
             f"ID: {agent.unique_id}",
             f"resources: {round(agent.resources)}",
-            f"gold_resource: {agent.gold}"
+            f"gold_resource: {agent.gold}",
+            f"init_population: {agent.init_population}",
+            f"population: {len(agent.agents)}"
         ],
         "weight":2
     }

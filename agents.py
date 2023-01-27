@@ -11,18 +11,25 @@ class VictoriaAgent(mg.GeoAgent):
         super().__init__(unique_id, model, geometry, crs)
         # Gold location dictionary with elements unique_id, distance, path
         self.gold_loc = {}
+
         # initial agents to be created in this cell
         self.init_population = 10
+        
         # amount of resources intially available to be collected
         self.resources = random.randint(20,50)
+        
         # initial amount of gold available
         self.gold = 0
+        
         # exchange rate i.e. how many resources one gold piece buys
         self.exchange = 5
+        
         # func of gold and resources the people own and number of people
         self.economic_opportunity = 0 
+        
         # list with agent dictionaries
         self.agents = []
+        
         # number of agents, will be used to visualize population density
         self.population = len(self.agents)
         
@@ -31,7 +38,6 @@ class VictoriaAgent(mg.GeoAgent):
        
         
 ################# Functions Alterring Cell Properties #########################
-
 
     def set_type(self, atype):
         # Randomly create goldmines
@@ -55,7 +61,7 @@ class VictoriaAgent(mg.GeoAgent):
         for i in range(self.init_population):
             agent = {
                 "id": agent_id,
-                "miner": False,
+                "miner": False, # everyone is nonminer by default
                 "destination": 0,
                 "mining_ability": numpy.absolute(numpy.random.normal(5,2)),
                 "gold": 0,
@@ -112,9 +118,7 @@ class VictoriaAgent(mg.GeoAgent):
 
 
         
-        
 ############### Functions Determining Actions of Indiviudals ##################
-
 
     def consume_resources(self):
         """
@@ -125,9 +129,9 @@ class VictoriaAgent(mg.GeoAgent):
         dead_agent_count = 0
         
         for agent in self.agents:
-            
             if agent['resources'] > 0:
                 agent['resources'] -= 1
+                # self.resources -= 1
             
             else:
                 # delete agent
@@ -194,8 +198,7 @@ class VictoriaAgent(mg.GeoAgent):
                     continue
                     # check next step towards gold mine
                     # move agent to that cell
-        
-            
+
             
 ####################### Functions Advancing the Model ########################
 
@@ -205,14 +208,19 @@ class VictoriaAgent(mg.GeoAgent):
         
         # check if people become miners
         self.turn_miner() # unfinished function
+
         # agents acquire resources from cells
         self.acquire_resources()
+        
         # resources in cells regrow
         self.resource_regrowth()
+        
         # calculate and update economic opporunity in cells
         self.calc_econ_opp()
+        
         # move agents to cells with highest economic opportunity
         self.move() # very unfinished function
+        
         # trade between agents
         # agents consume resources or die if not in possession of any
         self.consume_resources() # unfinished function
