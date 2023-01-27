@@ -92,8 +92,6 @@ class VictoriaAgent(mg.GeoAgent):
                         for k in self.gold_loc.keys():
                             n.gold_loc[k] = self.gold_loc[k] + 1
                             n.tell += 1
-            elif self.tell == 1:
-                self.tell += 1
 
     # advance function
     def advance(self):
@@ -101,6 +99,12 @@ class VictoriaAgent(mg.GeoAgent):
         if self.resources < 0 : self.resources = 0
         # self.resources += numpy.random.normal(loc=1, scale=0.2) * self.nonminers
         self.resources += numpy.random.normal(loc=1, scale=0.2) * self.nonminers + numpy.random.normal(loc=1.1, scale=0.2) * self.miners 
+
+        if self.atype == "Land" and self.tell == 1:
+            neighbors = list(self.model.space.get_neighbors_within_distance(self, distance=2))
+            for n in neighbors:
+                if n.tell == 1:
+                    n.tell += 1
 
 
 ## Suggestion for moving agents as separate class:
