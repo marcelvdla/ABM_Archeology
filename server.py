@@ -27,17 +27,21 @@ def victoria_draw(agent):
     Portrayal Method for canvas
     """
     portrayal = {
-        "description":(
+        "description":[
             f"Agent type: {agent.atype}", 
-            f"ID: {agent.unique_id}", 
-            f"tell: {agent.tell}",
+            f"ID: {agent.unique_id}",
             f"miners: {agent.miners}",
             f"non-miners: {agent.nonminers}",
             f"resources: {round(agent.resources)}",
             f"gold_resource: {agent.gold_resource}"
-            ),
+        ],
         "weight":2
     }
+
+    if agent.gold_loc != {}:
+        t = portrayal["description"]
+        t.append(f"path to gold: {list(agent.gold_loc.values())}")
+        portrayal["description"] = t
 
     if agent.atype == "Land":
         portrayal["color"] = "Grey"
@@ -64,7 +68,7 @@ def victoria_pop(agent):
     }
 
     portrayal = {
-        "description":(
+        "description":[
             f"Agent type: {agent.atype}", 
             f"ID: {agent.unique_id}", 
             f"tell: {agent.tell}",
@@ -72,9 +76,14 @@ def victoria_pop(agent):
             f"non-miners: {agent.nonminers}",
             f"resources: {round(agent.resources)}",
             f"gold_resource: {agent.gold_resource}"
-            ),
+            ],
         "weight":2
     }
+
+    if agent.gold_loc != {}:
+        t = portrayal["description"]
+        t.append(f"path to gold: {list(agent.gold_loc.values())}")
+        portrayal["description"] = t
     
     population = agent.miners + agent.nonminers
     if int(population/30) > 5 : col = 5 
@@ -86,7 +95,7 @@ def victoria_pop(agent):
 
 
 map_element = mg.visualization.MapModule(
-    victoria_pop, [-37,145], 7, 1000, 750)
+    victoria_draw, [-37,145], 7, 1000, 750)
 server = mesa.visualization.ModularServer(
     GeoVictoria, [map_element], "Victoria", model_params
 )

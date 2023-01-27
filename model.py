@@ -16,7 +16,6 @@ class GeoVictoria(mesa.Model):
 
         start_state = pd.read_csv("Modelstates/test.csv")
 
-
         ac = mg.AgentCreator(VictoriaAgent, model=self)
         agents = ac.from_file("Shapefiles/victoria_hex.geojson")
         self.space.add_agents(agents)

@@ -81,17 +81,17 @@ class VictoriaAgent(mg.GeoAgent):
         elif self.atype == "Gold" and self.tell:
             # Tell neighbors I have gold
             for n in neighbors:
-                n.gold_loc[self.unique_id] = 1
+                n.gold_loc[self.unique_id] = [1, self.gold_resource, self.unique_id]
                 n.tell += 1
-                self.tell = 0
+                self.tell = -1
         elif self.atype == "Land":
             # Check if I can tell neighbors where gold is
             if self.tell == 2:
                 for n in neighbors:
                     if n.tell == 0:
+                        n.tell += 1
                         for k in self.gold_loc.keys():
-                            n.gold_loc[k] = self.gold_loc[k] + 1
-                            n.tell += 1
+                            n.gold_loc[k] = [self.gold_loc[k][0] + 1, self.gold_loc[k][1], self.unique_id]
 
     # advance function
     def advance(self):
@@ -105,6 +105,7 @@ class VictoriaAgent(mg.GeoAgent):
             for n in neighbors:
                 if n.tell == 1:
                     n.tell += 1
+                    
 
 
 ## Suggestion for moving agents as separate class:
