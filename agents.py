@@ -48,6 +48,8 @@ class VictoriaAgent(mg.GeoAgent):
             agent = {
                 "id": agent_id,
                 "miner": False,
+                "destination": 0,
+                "mining capability": numpy.random.normal(5,1),
                 "gold": 0,
                 "resources": 10,
                 "risk_factor": 0.5
@@ -56,36 +58,36 @@ class VictoriaAgent(mg.GeoAgent):
             # global agent_id += 1
 
     
-    def trade_and_move(self):
-        for agent in self.agents:
-            total_resources += agent["resource"]
-            if agent["miner"]:
-                if agent["resource"] < 2 and agent["gold"] > 0:
-                    # trade 1 gold for 5 resources
-                    for agent2 in self.agents:
-                        if agent2["id"] != agent["id"] and agent2["resource"] > 20:
-                            agent["resource"] += 5
-                            agent["gold"] -= 1
-                            agent2["resource"] -= 5
-                            agent2["gold"] += 1
-                            break
-                        else : 
-                            neighbors = list(self.model.space.get_neighbors_within_distance(self, distance=2))
-                            possible_steps = [move for move in neighbors if (move.resources > self.resources or move.trade_opp > self.trade_opp)]
-                            if len(possible_steps) > 0:
-                                move_to = random.choice(possible_steps)
-                                move_to.agents.append(agent)
-                                del agent
+    # def trade_and_move(self):
+    #     for agent in self.agents:
+    #         total_resources += agent["resource"]
+    #         if agent["miner"]:
+    #             if agent["resource"] < 2 and agent["gold"] > 0:
+    #                 # trade 1 gold for 5 resources
+    #                 for agent2 in self.agents:
+    #                     if agent2["id"] != agent["id"] and agent2["resource"] > 20:
+    #                         agent["resource"] += 5
+    #                         agent["gold"] -= 1
+    #                         agent2["resource"] -= 5
+    #                         agent2["gold"] += 1
+    #                         break
+    #                     else : 
+    #                         neighbors = list(self.model.space.get_neighbors_within_distance(self, distance=2))
+    #                         possible_steps = [move for move in neighbors if (move.resources > self.resources or move.trade_opp > self.trade_opp)]
+    #                         if len(possible_steps) > 0:
+    #                             move_to = random.choice(possible_steps)
+    #                             move_to.agents.append(agent)
+    #                             del agent
 
-            # is trading factor dependent on total_resources?
-            # maybe update trade opp ?
+    #         # is trading factor dependent on total_resources?
+    #         # maybe update trade opp ?
 
-            if agent.miner == True and self.gold > 0:
-                agent.gold += 1
-                self.gold -=1
-            elif agent.miner == False:
-                agent.resources += 1
-                self.resources -= 1
+    #         if agent.miner == True and self.gold > 0:
+    #             agent.gold += 1
+    #             self.gold -=1
+    #         elif agent.miner == False:
+    #             agent.resources += 1
+    #             self.resources -= 1
 
     def step(self):
         self.make_people(self) # should only be in the first step
