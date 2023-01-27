@@ -9,7 +9,7 @@ class VictoriaAgent(mg.GeoAgent):
         Create Local Environment containing resources and agents.
         """
         super().__init__(unique_id, model, geometry, crs)
-        # Gold location dictionary with elements unique_id:distance, path
+        # Gold location dictionary with elements unique_id, distance, path
         self.gold_loc = {}
         # initial agents to be created in this cell
         self.init_population = 10
@@ -139,20 +139,42 @@ class VictoriaAgent(mg.GeoAgent):
         find gold and others farm free resources on land). These resources are
         extracted from the cell. Both Resources and Gold can't drop below 0'
         """
-    
+        
+        # Iterate through agents in cell
         for agent in self.agents:
             
-            if agent['miner'] == False:
-                resources_farmed = numpy.absolute(numpy.random.normal(agent["farming_ability"],1))
-                if resources_farmed <= self.resources:
-                    agent["resources"] += resources_farmed
-                    self.resources -= resources_farmed
-                
-            elif agent['miner'] == True:
+            # If agents are miners and in a cell with gold they mine
+            if agent['miner'] == True and self.atype == "Gold":
                 gold_mined = numpy.absolute(numpy.random.normal(agent["mining_ability"],1))
                 if gold_mined <= self.gold:
                     agent["gold"] += gold_mined
                     self.gold -= gold_mined
+                    
+            # Non-miners and miners that haven't reached their destination farm
+            else:
+                resources_farmed = numpy.absolute(numpy.random.normal(agent["farming_ability"],1))
+                if resources_farmed <= self.resources:
+                    agent["resources"] += resources_farmed
+                    self.resources -= resources_farmed
+    
+    
+    def turn_miner(self):
+        """
+        This function evaluates whether agents decide to become miners based
+        on the knowledge they possess about the size of gold mines and the 
+        distance to them as well as their personal risk level.
+        """
+        
+        # iterate over agents
+        for agent in self.agents:
+            # iterate through all locations known in current cell
+            for loc in gold_loc:
+                # calculate leaving probability
+                leaving_prob = 0.4
+                if numpy.random.random() < leaving_prob:
+                    agent['miner'] = True
+                    agent['destination'] = # cell ID extracted from loc
+            
     
     def move(self):
         
@@ -180,11 +202,17 @@ class VictoriaAgent(mg.GeoAgent):
         self.information_spread()
         
         # check if people become miners
+        self.turn_miner() # unfinished function
+        # agents acquire resources from cells
         self.acquire_resources()
+        # resources in cells regrow
         self.resource_regrowth()
+        # calculate and update economic opporunity in cells
         self.calc_econ_opp()
-        self.move() #very unfinished function
-        # trade
+        # move agents to cells with highest economic opportunity
+        self.move() # very unfinished function
+        # trade between agents
+        # agents consume resources or die if not in possession of any
         self.consume_resources() # unfinished function
         # replace dead agents randomly in new cells
 
