@@ -55,6 +55,7 @@ class VictoriaAgent(mg.GeoAgent):
             self.agents.append(agent)
             # global agent_id += 1
 
+    
     def trade_and_move(self):
         for agent in self.agents:
             total_resources += agent["resource"]
@@ -87,11 +88,14 @@ class VictoriaAgent(mg.GeoAgent):
                 self.resources -= 1
 
     def step(self):
-        # agents farm, mine
-        # agents move
-        # agents trade
         self.make_people(self) # should only be in the first step
-
+        
+        # check if people become miners
+        # perform action either farm or mine or nothing
+        # regrow qresources
+        # move (miners to mine, other to higher economic opp)
+        # trade
+        
         self.trade_and_move(self)
     def information_spread(self):
         neighbors = list(self.model.space.get_neighbors_within_distance(self, distance=2))
