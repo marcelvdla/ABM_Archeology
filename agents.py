@@ -57,8 +57,9 @@ class VictoriaAgent(mg.GeoAgent):
                 "id": agent_id,
                 "miner": False,
                 "destination": 0,
-                "mining capability": numpy.random.normal(5,1),
+                "mining_ability": numpy.absolute(numpy.random.normal(5,2)),
                 "gold": 0,
+                "farming_ability": numpy.absolute(numpy.random.normal(5,2)),
                 "resources": 10,
                 "risk_factor": 0.5
             }
@@ -130,10 +131,30 @@ class VictoriaAgent(mg.GeoAgent):
             else:
                 # delete agent
                 dead_agent_count += 1
+                
+                
+    def acquire_resources(self):
+        """
+        Individuals acquire resources based on their occupation (i.e. miners
+        find gold and others farm free resources on land). These resources are
+        extracted from the cell. Both Resources and Gold can't drop below 0'
+        """
+    
+        for agent in self.agents:
             
-
-
-
+            if agent['miner'] == False:
+                resources_farmed = numpy.absolute(numpy.random.normal(agent["farming_ability"],1))
+                if resources_farmed <= self.resources:
+                    agent["resources"] += resources_farmed
+                    self.resources -= resources_farmed
+                
+            elif agent['miner'] == True:
+                gold_mined = numpy.absolute(numpy.random.normal(agent["mining_ability"],1))
+                if gold_mined <= self.gold:
+                    agent["gold"] += gold_mined
+                    self.gold -= gold_mined
+            
+            
 ####################### Functions Advancing the Model ########################
 
     def step(self):
@@ -143,7 +164,7 @@ class VictoriaAgent(mg.GeoAgent):
         self.information_spread()
         
         # check if people become miners
-        # perform action either farm or mine or nothing
+        self.acquire_resources()
         self.resource_regrowth()
         self.calc_econ_opp()
         # move (miners to mine, other to higher economic opp)
