@@ -92,6 +92,8 @@ class VictoriaAgent(mg.GeoAgent):
         
         # check if people become miners
         # perform action either farm or mine or nothing
+        # consume or die
+        # replace dead agents randomly in new cells
         # regrow qresources
         # move (miners to mine, other to higher economic opp)
         # trade
