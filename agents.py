@@ -18,7 +18,7 @@ class VictoriaAgent(mg.GeoAgent):
         # initial amount of gold available
         self.gold = 0
         # func of gold and resources the people own and number of people
-        self.trade_opp = 0 
+        self.economic_opportunity = 0 
         # list with agent dictionaries
         self.agents = []
         # number of agents, will be used to visualize population density
