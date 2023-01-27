@@ -92,7 +92,7 @@ class VictoriaAgent(mg.GeoAgent):
         if self.atype == "Gold" and self.tell:
             # Tell neighbors I have gold
             for n in neighbors:
-                n.gold_loc[self.unique_id] = [1, self.gold_resource, self.unique_id]
+                n.gold_loc[self.unique_id] = [1, self.gold, self.unique_id]
                 n.tell += 1
                 self.tell = -1
         elif self.atype == "Land":
