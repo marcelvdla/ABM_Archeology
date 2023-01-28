@@ -25,6 +25,14 @@ class GeoVictoria(mesa.Model):
                 index = start_state.index[start_state["unique_id"] == agent.unique_id][0]
                 agent.set_type(start_state["type"][index])
             
+            # Add a testminer to see if it goes to the goldmine
+            if agent.unique_id == 23:
+                testminer = {
+                "miner": True,
+                "destination": -1
+                }
+                agent.agents[0] = testminer
+            
             self.schedule.add(agent)
 
     def step(self):
