@@ -9,6 +9,7 @@ class VictoriaAgent(mg.GeoAgent):
         Create Local Environment containing resources and agents.
         """
         super().__init__(unique_id, model, geometry, crs)
+        self.model = model
         # Gold location dictionary with elements unique_id, distance, path
         self.gold_loc = {}
         # initial agents to be created in this cell
@@ -22,26 +23,27 @@ class VictoriaAgent(mg.GeoAgent):
         # func of gold and resources the people own and number of people
         self.economic_opportunity = 0 
         # list with agent dictionaries
-        self.agents = []
+        self.agents = dict()
         # number of agents, will be used to visualize population density
         self.population = len(self.agents)
         
         self.tell = 0
         self.atype = "Land"
+
+        self.moving_agent = dict()
        
         
 ################# Functions Alterring Cell Properties #########################
 
 
-    def set_type(self, atype):
+    def set_type(self, atype, gold_size = 0):
         # Randomly create goldmines
         # n = random.random() 
         self.atype = atype
 
         if atype == "Gold":
             self.atype = "Gold"
-            self.gold_loc['unique_id'] = 0
-            self.miners = 20
+            self.gold_loc['unique_id'] = [0, gold_size, self.unique_id]
             self.tell += 1
         # else:
         #     self.atype = "Miner"
@@ -201,19 +203,25 @@ class VictoriaAgent(mg.GeoAgent):
         
         for agent in self.agents:
             
-            if agent['miner'] == False:
+            if self.agents[agent]['miner'] == False:
                 continue
                 # check neighbouring cells for highest economic oppportunity 
                 # move agent to that cell
             
-            elif agent['miner'] == True:
-                if agent['destination'] == 0:#current cell:
-                    continue
-                    #remain
-                else:
-                    continue
-                    # check next step towards gold mine
-                    # move agent to that cell
+            elif self.agents[agent]["miner"] == True:
+                if self.agents[agent]['destination'] == -1:
+                    # Look if cell knows where gold is and add is to agent as destination
+                    distance = 100
+                    for k in self.gold_loc.keys():
+                        if self.gold_loc[k][0] < distance:
+                            distance = self.gold_loc[k][0]
+                            self.agents[agent]["destination"] = k
+                # Add agent agent to next location
+                elif self.agents[agent]["destination"] != self.unique_id:
+                    move_to = self.gold_loc[self.agents[agent]["destination"]][2]
+                    print("miner will move to", move_to)
+                    self.moving_agent[agent] = move_to
+                
         
             
             
@@ -224,18 +232,18 @@ class VictoriaAgent(mg.GeoAgent):
         self.information_spread_step()
         
         # check if people become miners
-        self.turn_miner() # unfinished function
+        # self.turn_miner() # unfinished function
         # agents acquire resources from cells
-        self.acquire_resources()
+        # self.acquire_resources()
         # resources in cells regrow
-        self.resource_regrowth()
+        # self.resource_regrowth()
         # calculate and update economic opporunity in cells
-        self.calc_econ_opp()
+        # self.calc_econ_opp()
         # move agents to cells with highest economic opportunity
         self.move() # very unfinished function
         # trade between agents
         # agents consume resources or die if not in possession of any
-        self.consume_resources() # unfinished function
+        # self.consume_resources() # unfinished function
         # replace dead agents randomly in new cells
 
     # advance function
@@ -247,7 +255,21 @@ class VictoriaAgent(mg.GeoAgent):
         if self.resources < 0 : self.resources = 0
         # self.resources += numpy.random.normal(loc=1, scale=0.2) * self.nonminers
         # self.resources += numpy.random.normal(loc=1, scale=0.2) * self.nonminers + numpy.random.normal(loc=1.1, scale=0.2) * self.miners 
+        
         self.information_spread_advance()
+
+        ## Add moving agents to other node
+        for moving_id in self.moving_agent:
+            for a in self.model.space.agents:
+            
+                if a.unique_id == self.moving_agent[moving_id]:
+                    a.agents[moving_id] = self.agents[moving_id]
+    
+            # Remove agent from dictionary of agents
+            self.agents.pop(moving_id)
+
+        # Clear moving agent dict after advance
+        self.moving_agent = dict()
 
 
 ############################## Old Functions #################################
