@@ -9,6 +9,7 @@ class VictoriaAgent(mg.GeoAgent):
         Create Local Environment containing resources and agents.
         """
         super().__init__(unique_id, model, geometry, crs)
+        self.model = model
         # Gold location dictionary with elements unique_id, distance, path
         self.gold_loc = {}
 
@@ -35,23 +36,30 @@ class VictoriaAgent(mg.GeoAgent):
         
         self.tell = 0
         self.atype = "Land"
+
+        self.moving_agent = dict()
        
         
 ################# Functions Alterring Cell Properties #########################
 
-    def set_type(self, atype):
+
+    def set_type(self, atype, gold_size = 0):
         # Randomly create goldmines
         # n = random.random() 
         self.atype = atype
 
         if atype == "Gold":
             self.atype = "Gold"
-            self.gold_loc['unique_id'] = 0
-            self.miners = 20
+            self.gold_loc['unique_id'] = [0, gold_size, self.unique_id]
             self.tell += 1
         # else:
         #     self.atype = "Miner"
-                
+    
+    def get_neighbors(self, id=1):
+        if id:
+            return [n.unique_id for n in list(self.model.space.get_neighbors_within_distance(self, distance=2)) if n.unique_id != self.unique_id]
+        else:
+            return list(self.model.space.get_neighbors_within_distance(self, distance=2))
         
     def initialize_population(self, agent_id):
         """
@@ -98,25 +106,40 @@ class VictoriaAgent(mg.GeoAgent):
         self.resources += random.randint(5,10)
     
     
-    def information_spread(self):
+    def information_spread_step(self):
         neighbors = list(self.model.space.get_neighbors_within_distance(self, distance=2))
 
-        if self.atype == "Gold" and self.tell:
+        if self.atype == "Gold" and self.tell == 1:
             # Tell neighbors I have gold
             for n in neighbors:
-                n.gold_loc[self.unique_id] = [1, self.gold, self.unique_id]
-                n.tell += 1
-                self.tell = -1
-        elif self.atype == "Land":
+                if n != self:
+                    n.gold_loc[self.unique_id] = [1, self.gold, self.unique_id]
+                    n.tell += 1
+                    self.tell = -1
+        elif self.atype == "Land" and self.tell == 2:
             # Check if I can tell neighbors where gold is
-            if self.tell == 2:
-                for n in neighbors:
-                    if n.tell == 0:
-                        n.tell += 1
-                        for k in self.gold_loc.keys():
-                            n.gold_loc[k] = [self.gold_loc[k][0] + 1, self.gold_loc[k][1], self.unique_id]
+            for n in neighbors:
+                if n.tell == 0:
+                    n.tell += 1
+                    for k in self.gold_loc.keys():
+                        if k not in list(n.gold_loc.keys()):
+                            distance = self.gold_loc[k][0] + 1
+                            gold_size = self.gold_loc[k][1]
+                            n.gold_loc[k] = [distance, gold_size, self.unique_id]
 
+    def information_spread_advance(self):
+        neighbors = list(self.model.space.get_neighbors_within_distance(self, distance=2))
 
+        if self.atype == "Land" and self.tell == 1:
+            neighbors = list(self.model.space.get_neighbors_within_distance(self, distance=2))
+            knows = list(self.gold_loc.keys())
+            for n in neighbors:
+                n_knows = list(n.gold_loc.keys())
+                if n.tell == 1 and not any(k in n_knows for k in knows):
+                    n.tell += 1
+            self.tell += 1
+        elif self.atype == "Land" and self.tell == 2:
+            self.tell = 0
         
 ############### Functions Determining Actions of Indiviudals ##################
 
@@ -203,29 +226,32 @@ class VictoriaAgent(mg.GeoAgent):
                             del agent
 
     def move(self):
-        
-        for id in self.agents:
-            agent = self.agents[id]
-            if agent['miner'] == False:
+        for agent in self.agents:
+            if self.agents[agent]['miner'] == False:
                 continue
                 # check neighbouring cells for highest economic oppportunity 
                 # move agent to that cell
             
-            elif agent['miner'] == True:
-                if agent['destination'] == 0:#current cell:
-                    continue
-                    #remain
-                else:
-                    continue
-                    # check next step towards gold mine
-                    # move agent to that cell
-
+            elif self.agents[agent]["miner"] == True:
+                if self.agents[agent]['destination'] == -1:
+                    # Look if cell knows where gold is and add is to agent as destination
+                    distance = 100
+                    for k in self.gold_loc.keys():
+                        if self.gold_loc[k][0] < distance:
+                            distance = self.gold_loc[k][0]
+                            self.agents[agent]["destination"] = k
+                # Add agent agent to next location
+                elif self.agents[agent]["destination"] != self.unique_id:
+                    move_to = self.gold_loc[self.agents[agent]["destination"]][2]
+                    print("miner will move to", move_to)
+                    self.moving_agent[agent] = move_to
+                
 
 ####################### Functions Advancing the Model ########################
 
     def step(self):
 
-        self.information_spread()
+        self.information_spread_step()
         
         # check if people become miners
         self.turn_miner() # unfinished function
@@ -259,12 +285,21 @@ class VictoriaAgent(mg.GeoAgent):
         if self.resources < 0 : self.resources = 0
         # self.resources += numpy.random.normal(loc=1, scale=0.2) * self.nonminers
         # self.resources += numpy.random.normal(loc=1, scale=0.2) * self.nonminers + numpy.random.normal(loc=1.1, scale=0.2) * self.miners 
+        
+        self.information_spread_advance()
 
-        if self.atype == "Land" and self.tell == 1:
-            neighbors = list(self.model.space.get_neighbors_within_distance(self, distance=2))
-            for n in neighbors:
-                if n.tell == 1:
-                    n.tell += 1
+        ## Add moving agents to other node
+        for moving_id in self.moving_agent:
+            for a in self.model.space.agents:
+            
+                if a.unique_id == self.moving_agent[moving_id]:
+                    a.agents[moving_id] = self.agents[moving_id]
+    
+            # Remove agent from dictionary of agents
+            self.agents.pop(moving_id)
+
+        # Clear moving agent dict after advance
+        self.moving_agent = dict()
 
 
 ############################## Old Functions #################################

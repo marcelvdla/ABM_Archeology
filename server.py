@@ -33,7 +33,7 @@ def victoria_draw(agent):
             f"resources: {round(agent.resources)}",
             f"gold_resource: {agent.gold}",
             f"init_population: {agent.init_population}",
-            f"population: {len(agent.agents)}"
+            f"agents: {agent.agents}"
         ],
         "weight":2
     }
@@ -47,11 +47,16 @@ def victoria_draw(agent):
         portrayal["color"] = "Grey"
     elif agent.atype == "Gold":
         portrayal["color"] = "Yellow"
-    elif agent.atype == "Road":
-        portrayal["color"] = "Red"
+    # elif agent.atype == "Road":
+    #     portrayal["color"] = "Red"
 
     if agent.gold_loc != {} and agent.atype != "Gold":
         portrayal["color"] = "Green"
+
+    for a in agent.agents:
+        print(a, type(a))
+        if agent.agents[a]["miner"] and agent.atype != "Gold":
+            portrayal["color"] = "Red"
     # elif agent.atype == "Miner":
     #     portrayal["color"] = "Red"
     # elif agent.atype == "Settled":

@@ -28,6 +28,15 @@ class GeoVictoria(mesa.Model):
             # initial population
             agent.initialize_population(self.agent_id)
             self.agent_id += 1
+
+            # Add a testminer to see if it goes to the goldmine
+            if agent.unique_id == 23:
+                testminer = {
+                "miner": True,
+                "destination": -1
+                }
+                agent.agents[0] = testminer
+            
             self.schedule.add(agent)
 
     def step(self):
