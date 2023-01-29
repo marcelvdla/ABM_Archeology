@@ -14,7 +14,7 @@ class VictoriaAgent(mg.GeoAgent):
         self.gold_loc = {}
 
         # initial agents to be created in this cell
-        self.init_population = 10
+        self.init_population = 3
         
         # amount of resources intially available to be collected
         self.resources = random.randint(20,50)
@@ -77,7 +77,8 @@ class VictoriaAgent(mg.GeoAgent):
                 "resources": 10,
                 "risk_factor": 0.5
             }
-            # global agent_id += 1
+            agent_id += 1
+        return agent_id
 
     def calc_econ_opp(self):
         """
