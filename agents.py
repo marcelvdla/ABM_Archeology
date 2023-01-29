@@ -27,8 +27,8 @@ class VictoriaAgent(mg.GeoAgent):
         # func of gold and resources the people own and number of people
         self.economic_opportunity = 0 
         
-        # list with agent dictionaries
-        self.agents = []
+        # dictionary with agent dictionaries
+        self.agents = {}
         
         # number of agents, will be used to visualize population density
         self.population = len(self.agents)
@@ -58,8 +58,8 @@ class VictoriaAgent(mg.GeoAgent):
         create an intial population of agents within a cell (i.e. local environment)
         with a global agent ID to identify them as they move between cells.
         """
-        for i in range(self.init_population):
-            agent = {
+        for _ in range(self.init_population):
+            self.agents[agent_id] = {
                 "id": agent_id,
                 "miner": False, # everyone is nonminer by default
                 "destination": 0,
@@ -69,10 +69,8 @@ class VictoriaAgent(mg.GeoAgent):
                 "resources": 10,
                 "risk_factor": 0.5
             }
-            self.agents.append(agent)
             # global agent_id += 1
 
-    
     def calc_econ_opp(self):
         """
         function to calculate the economic opportunity in a cell as a function
@@ -83,7 +81,9 @@ class VictoriaAgent(mg.GeoAgent):
         """
         total_wealth = 0
         
-        for agent in self.agents:
+        # iterate over agents
+        for id in self.agents:
+            agent = self.agents[id]
             total_wealth += agent['resources'] + agent['gold']*self.exchange
             
         ## ADD ONE SMOOTHING TO AVOID DIVISION BY ZERO
@@ -128,7 +128,9 @@ class VictoriaAgent(mg.GeoAgent):
         # keep count of agents that die to create new agents
         dead_agent_count = 0
         
-        for agent in self.agents:
+        # iterate over agents
+        for id in self.agents:
+            agent = self.agents[id]
             if agent['resources'] > 0:
                 agent['resources'] -= 1
                 # self.resources -= 1
@@ -144,9 +146,9 @@ class VictoriaAgent(mg.GeoAgent):
         extracted from the cell. Both Resources and Gold can't drop below 0'
         """
         
-        # Iterate through agents in cell
-        for agent in self.agents:
-            
+        # iterate over agents
+        for id in self.agents:
+            agent = self.agents[id]
             # If agents are miners and in a cell with gold they mine
             if agent['miner'] == True and self.atype == "Gold":
                 gold_mined = numpy.absolute(numpy.random.normal(agent["mining_ability"],1))
@@ -170,7 +172,8 @@ class VictoriaAgent(mg.GeoAgent):
         """
         
         # iterate over agents
-        for agent in self.agents:
+        for id in self.agents:
+            agent = self.agents[id]
             # iterate through all locations known in current cell
             for loc in self.gold_loc:
                 # calculate leaving probability
@@ -184,7 +187,8 @@ class VictoriaAgent(mg.GeoAgent):
         This function evaluates whether agents decide to trade based on 
         their individual resources and gold, and the resources of other agents.
         """
-        for agent in self.agents:
+        for id in self.agents:
+            agent = self.agents[id]
             if agent["miner"]:
                 if agent["resources"] < 2 and agent["gold"] > 0:
                     # trade gold with the echange rate
@@ -200,7 +204,8 @@ class VictoriaAgent(mg.GeoAgent):
 
     def move(self):
         
-        for agent in self.agents:
+        for id in self.agents:
+            agent = self.agents[id]
             if agent['miner'] == False:
                 continue
                 # check neighbouring cells for highest economic oppportunity 
