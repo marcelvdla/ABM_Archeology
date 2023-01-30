@@ -34,7 +34,7 @@ class GeoVictoria(mesa.Model):
             self.agent_id += 1
 
             # Add a testminer to see if it goes to the goldmine
-            if agent.unique_id == 23:
+            if agent.unique_id == 23 or agent.unique_id == 229:
                 testminer = {
                 "id": 0,
                 "miner": True,
