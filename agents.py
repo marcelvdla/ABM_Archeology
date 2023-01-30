@@ -193,24 +193,33 @@ class VictoriaAgent(mg.GeoAgent):
         This function evaluates whether agents decide to become miners based
         on the knowledge they possess about the size of gold mines and the 
         distance to them as well as their personal risk level.
-        """
+        """ 
         
-        # iterate over agents
-        max_resources =
+        # find max resources owned by an agent in neighbouring and own cell
+        max_resources = 0
+        neighbors = list(self.model.space.get_neighbors_within_distance(self, distance=2))
+        for n in neighbors:
+            for id in n.agents:
+                agent = n.agents[id]
+                if agent['resources'] > max_resources:
+                    max_resources = agent['resources']
+                
+                
         # iterate over agents
         for id in self.agents:
             agent = self.agents[id]
             # iterate through all locations known in current cell
             for loc in self.gold_loc:
-                distance = 
-                gold_amount = 
+                distance = self.gold_loc[loc][0]
+                gold_amount = self.gold_loc[loc][1]
                 resource_factor = numpy.exp(-alpha*agent['resources']/max_resources)
                 distance_factor = numpy.exp(-beta*distance)
                 gold_factor = 1/(1+numpy.exp(-gamma*gold_amount))
+                # calculate probability of leaving to become a miner
                 probability = (resource_factor + distance_factor + gold_factor + agent["risk_factor"])/4
                 if numpy.random.random() < probability:
                     agent['miner'] = True
-                    agent['destination'] = 0 # cell ID extracted from loc
+                    agent['destination'] = -1 # cell ID extracted from loc
             
     def trade(self):
         """
