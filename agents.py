@@ -10,6 +10,7 @@ class VictoriaAgent(mg.GeoAgent):
         """
         super().__init__(unique_id, model, geometry, crs)
         self.model = model
+        
         # Gold location dictionary with elements unique_id, distance, path
         self.gold_loc = {}
 
