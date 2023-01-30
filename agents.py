@@ -36,6 +36,10 @@ class VictoriaAgent(mg.GeoAgent):
         # number of agents, will be used to visualize population density
         self.population = 3
         
+        self.number_of_miners = 0
+        
+        self.avg_probability = 0
+        
         self.tell = 0
         
         self.resource_stats = []
@@ -51,7 +55,10 @@ class VictoriaAgent(mg.GeoAgent):
             data = (
                 self.unique_id,
                 self.population,
+                self.number_of_miners,
+                self.avg_probability,
                 self.gold_stats,
+                self.resource_stats,
                 self.economic_opportunity,
                 self.resources
             )
@@ -263,7 +270,7 @@ class VictoriaAgent(mg.GeoAgent):
                 if agent['resources'] > max_resources:
                     max_resources = agent['resources']
                 
-                
+        prob_list = []        
         # iterate over agents
         for id in self.agents:
             agent = self.agents[id]
@@ -281,9 +288,11 @@ class VictoriaAgent(mg.GeoAgent):
                 # print(gold_factor)
                 # print(probability)
                 # print("----------")
+                prob_list.append(probability)
                 if numpy.random.random() < probability:
                     agent['miner'] = True
                     agent['destination'] = -1 # cell ID extracted from loc
+        self.avg_probability = numpy.mean(numpy.array(prob_list))
             
     def trade(self):
         """
@@ -306,6 +315,10 @@ class VictoriaAgent(mg.GeoAgent):
                             del agent
 
     def move(self):
+        
+        # count number of miners
+        num_miners = 0
+        
         for agent in self.agents:
             if self.agents[agent]['miner'] == False:
                 # look for neighbouring cells for highest economic oppportunity
@@ -322,7 +335,10 @@ class VictoriaAgent(mg.GeoAgent):
                     self.moving_agent[agent] = move_to.unique_id
                 else: continue
             
+            
             elif self.agents[agent]["miner"] == True:
+                num_miners += 1
+                
                 if self.agents[agent]['destination'] == -1:
                     # Look if cell knows where gold is and add is to agent as destination
                     distance = 100
@@ -336,6 +352,8 @@ class VictoriaAgent(mg.GeoAgent):
                     move_to = self.gold_loc[self.agents[agent]["destination"]][2]
                     # print("miner will move to", move_to)
                     self.moving_agent[agent] = move_to
+                    
+        self.number_of_miners = num_miners
                 
 
 ####################### Functions Advancing the Model ########################
