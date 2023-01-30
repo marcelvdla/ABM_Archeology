@@ -70,7 +70,7 @@ class VictoriaAgent(mg.GeoAgent):
             self.agents[agent_id] = {
                 "id": agent_id,
                 "miner": False, # everyone is nonminer by default
-                "destination": 0,
+                "destination": -1,
                 "mining_ability": numpy.absolute(numpy.random.normal(5,2)),
                 "gold": 0,
                 "farming_ability": numpy.absolute(numpy.random.normal(5,2)),
@@ -204,7 +204,7 @@ class VictoriaAgent(mg.GeoAgent):
                 leaving_prob = 0.4
                 if numpy.random.random() < leaving_prob:
                     agent['miner'] = True
-                    agent['destination'] = 0 # cell ID extracted from loc
+                    agent['destination'] = -1 # cell ID extracted from loc
             
     def trade(self):
         """
@@ -243,6 +243,7 @@ class VictoriaAgent(mg.GeoAgent):
                             self.agents[agent]["destination"] = k
                 # Add agent agent to next location
                 elif self.agents[agent]["destination"] != self.unique_id:
+                    # print(self.agents, agent)
                     move_to = self.gold_loc[self.agents[agent]["destination"]][2]
                     print("miner will move to", move_to)
                     self.moving_agent[agent] = move_to
