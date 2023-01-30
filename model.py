@@ -19,7 +19,7 @@ class GeoVictoria(mesa.Model):
         self.beta = 0.5
         self.gamma = 0.1
         self.writer = csv.writer(open(f'Data/data_{file}.csv', 'w'))
-        self.writer.writerow(
+        self.writer.writerow((
                             "unique_id",
                             "population",
                             "number_of_miners",
@@ -27,7 +27,7 @@ class GeoVictoria(mesa.Model):
                             "gold_stats",
                             "resource_stats",
                             "economic_opportunity",
-                            "resources")
+                            "resources"))
 
         start_state = pd.read_csv("Modelstates/test.csv")
 
