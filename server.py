@@ -54,7 +54,7 @@ def victoria_draw(agent):
         portrayal["color"] = "Green"
 
     for a in agent.agents:
-        print(a, type(a))
+        # print(a, type(a))
         if agent.agents[a]["miner"] and agent.atype != "Gold":
             portrayal["color"] = "Red"
     # elif agent.atype == "Miner":
