@@ -2,6 +2,7 @@ import mesa_geo as mg
 import random
 import numpy
 import sys
+import random
 
 class VictoriaAgent(mg.GeoAgent):
     def __init__(self, unique_id, model, geometry, crs, atype=None):
@@ -99,20 +100,25 @@ class VictoriaAgent(mg.GeoAgent):
         self.resources += random.randint(5,10)
     
     
-    def information_spread_step(self):
+    def information_spread_step(self, stoch = 0.5):
         neighbors = list(self.model.space.get_neighbors_within_distance(self, distance=2))
+
+        nn_neighbors = [n for n in neighbors if self.unique_id not in list(n.gold_loc.keys())]
 
         if self.atype == "Gold" and self.tell == 1:
             # Tell neighbors I have gold
-            for n in neighbors:
-                if n != self:
+            for n in nn_neighbors:
+                if n != self and random.random() < stoch:
                     n.gold_loc[self.unique_id] = [1, self.gold, self.unique_id]
                     n.tell += 1
-                    self.tell = -1
+            
+            # Check if all neighbors know
+            if len([n for n in neighbors if self.unique_id not in list(n.gold_loc.keys())]) == 0:
+                self.tell = -1
         elif self.atype == "Land" and self.tell == 2:
             # Check if I can tell neighbors where gold is
-            for n in neighbors:
-                if n.tell == 0:
+            for n in nn_neighbors:
+                if n.tell == 0 and random.random() < stoch:
                     n.tell += 1
                     for k in self.gold_loc.keys():
                         if k not in list(n.gold_loc.keys()):
@@ -132,8 +138,16 @@ class VictoriaAgent(mg.GeoAgent):
                     n.tell += 1
             self.tell += 1
         elif self.atype == "Land" and self.tell == 2:
+            ## Check for shorter route in neighbors
+            for n in neighbors:
+                for k in self.gold_loc.keys():
+                    # If neighbor is goldmine
+                    if n.unique_id == k:
+                        self.gold_loc[k] = [1, self.gold_loc[k][1], n]
+                    # else update shortest route via neighbor
+                    elif k in n.gold_loc.keys() and n.gold_loc[k][0] < self.gold_loc[k][0] - 1:
+                        self.gold_loc[k] = [n.gold_loc[k][0] + 1, self.gold_loc[k][1], n.unique_id]
             self.tell = 0
-        
         
 ############### Functions Determining Actions of Indiviudals ##################
 
