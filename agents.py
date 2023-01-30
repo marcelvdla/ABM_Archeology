@@ -36,6 +36,11 @@ class VictoriaAgent(mg.GeoAgent):
         self.population = len(self.agents)
         
         self.tell = 0
+        
+        self.resource_stats = []
+        
+        self.gold_stats = []
+        
         self.atype = "Land"
 
         self.moving_agent = dict()
@@ -142,6 +147,21 @@ class VictoriaAgent(mg.GeoAgent):
             self.tell += 1
         elif self.atype == "Land" and self.tell == 2:
             self.tell = 0
+            
+    def get_wealth_stats(self):
+        resources = []
+        gold = []
+        for id in self.agents:
+            agent = self.agents[id]
+            resources.append(agent["resources"])
+            gold.append(["gold"])
+        resources = numpy.array(resources)
+        gold = numpy.array(gold)
+        self.resource_stats = [numpy.max(resources), numpy.mean(resources), numpy.std(resources)]
+        self.gold_stats = [numpy.max(resources), numpy.mean(resources), numpy.std(resources)]
+    
+        
+        
         
 ############### Functions Determining Actions of Indiviudals ##################
 
