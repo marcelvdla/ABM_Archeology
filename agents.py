@@ -188,7 +188,7 @@ class VictoriaAgent(mg.GeoAgent):
                     self.resources -= resources_farmed
     
     
-    def turn_miner(self, alpha, beta, gamma):
+    def turn_miner(self):
         """
         This function evaluates whether agents decide to become miners based
         on the knowledge they possess about the size of gold mines and the 
@@ -212,9 +212,9 @@ class VictoriaAgent(mg.GeoAgent):
             for loc in self.gold_loc:
                 distance = self.gold_loc[loc][0]
                 gold_amount = self.gold_loc[loc][1]
-                resource_factor = numpy.exp(-alpha*agent['resources']/max_resources)
-                distance_factor = numpy.exp(-beta*distance)
-                gold_factor = 1/(1+numpy.exp(-gamma*gold_amount))
+                resource_factor = numpy.exp(-self.model.alpha*agent['resources']/max_resources)
+                distance_factor = numpy.exp(-self.model.beta*distance)
+                gold_factor = 1/(1+numpy.exp(-self.model.gamma*gold_amount))
                 # calculate probability of leaving to become a miner
                 probability = (resource_factor + distance_factor + gold_factor + agent["risk_factor"])/4
                 if numpy.random.random() < probability:
