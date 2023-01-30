@@ -374,7 +374,7 @@ class VictoriaAgent(mg.GeoAgent):
         self.moving_agent = dict()
 
         # Save data to file
-        self.save_step()
+        self.save_step
 
 
 ############################## Old Functions #################################
