@@ -32,6 +32,7 @@ def victoria_draw(agent):
             f"ID: {agent.unique_id}",
             f"resources: {round(agent.resources)}",
             f"gold_resource: {agent.gold}",
+            f"init_population: {agent.init_population}",
             f"agents: {agent.agents}"
         ],
         "weight":2
@@ -53,7 +54,7 @@ def victoria_draw(agent):
         portrayal["color"] = "Green"
 
     for a in agent.agents:
-        print(a, type(a))
+        # print(a, type(a))
         if agent.agents[a]["miner"] and agent.atype != "Gold":
             portrayal["color"] = "Red"
     # elif agent.atype == "Miner":
