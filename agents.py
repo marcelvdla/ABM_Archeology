@@ -148,7 +148,12 @@ class VictoriaAgent(mg.GeoAgent):
         elif self.atype == "Land" and self.tell == 2:
             self.tell = 0
             
+            
     def get_wealth_stats(self):
+        """
+        Evaluate the max, mean and standrad deviation of both gold and resources
+        of the agents within each cell.
+        """
         resources = []
         gold = []
         for id in self.agents:
@@ -160,8 +165,6 @@ class VictoriaAgent(mg.GeoAgent):
         self.resource_stats = [numpy.max(resources), numpy.mean(resources), numpy.std(resources)]
         self.gold_stats = [numpy.max(resources), numpy.mean(resources), numpy.std(resources)]
     
-        
-        
         
 ############### Functions Determining Actions of Indiviudals ##################
 
