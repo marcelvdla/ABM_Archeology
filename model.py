@@ -14,9 +14,9 @@ class GeoVictoria(mesa.Model):
         self.running = True
         self.agent_id = 1
         self.minelist = []
-        self.alpha = 0.1
-        self.beta = 0.1
-        self.gamma = 2
+        self.alpha = 5
+        self.beta = 0.5
+        self.gamma = 0.1
 
         start_state = pd.read_csv("Modelstates/test.csv")
 
