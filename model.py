@@ -2,6 +2,7 @@ import mesa
 import mesa_geo as mg
 import pandas as pd
 import numpy
+import csv
 
 from agents import VictoriaAgent
 
@@ -17,6 +18,7 @@ class GeoVictoria(mesa.Model):
         self.alpha = 5
         self.beta = 0.5
         self.gamma = 0.1
+        self.writer = csv.writer(open('Data/data.csv', 'w'))
 
         start_state = pd.read_csv("Modelstates/test.csv")
 

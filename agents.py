@@ -45,6 +45,17 @@ class VictoriaAgent(mg.GeoAgent):
         self.atype = "Land"
 
         self.moving_agent = dict()
+
+    def save_step(self):
+        if self.population > 0:
+            data = (
+                self.unique_id,
+                self.population,
+                self.gold_stats,
+                self.economic_opportunity,
+                self.resources
+            )
+            self.model.writer.writerow(data)
        
         
 ################# Functions Alterring Cell Properties #########################
@@ -361,6 +372,9 @@ class VictoriaAgent(mg.GeoAgent):
 
         # Clear moving agent dict after advance
         self.moving_agent = dict()
+
+        # Save data to file
+        self.save_step
 
 
 ############################## Old Functions #################################
