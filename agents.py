@@ -75,7 +75,7 @@ class VictoriaAgent(mg.GeoAgent):
                 "gold": 0,
                 "farming_ability": numpy.absolute(numpy.random.normal(5,2)),
                 "resources": 10,
-                "risk_factor": 0.5
+                "risk_factor": numpy.random.random()
             }
             agent_id += 1
         return agent_id
@@ -188,7 +188,7 @@ class VictoriaAgent(mg.GeoAgent):
                     self.resources -= resources_farmed
     
     
-    def turn_miner(self):
+    def turn_miner(self, alpha, beta, gamma):
         """
         This function evaluates whether agents decide to become miners based
         on the knowledge they possess about the size of gold mines and the 
@@ -196,13 +196,19 @@ class VictoriaAgent(mg.GeoAgent):
         """
         
         # iterate over agents
+        max_resources =
+        # iterate over agents
         for id in self.agents:
             agent = self.agents[id]
             # iterate through all locations known in current cell
             for loc in self.gold_loc:
-                # calculate leaving probability
-                leaving_prob = 0.4
-                if numpy.random.random() < leaving_prob:
+                distance = 
+                gold_amount = 
+                resource_factor = numpy.exp(-alpha*agent['resources']/max_resources)
+                distance_factor = numpy.exp(-beta*distance)
+                gold_factor = 1/(1+numpy.exp(-gamma*gold_amount))
+                probability = (resource_factor + distance_factor + gold_factor + agent["risk_factor"])/4
+                if numpy.random.random() < probability:
                     agent['miner'] = True
                     agent['destination'] = 0 # cell ID extracted from loc
             
