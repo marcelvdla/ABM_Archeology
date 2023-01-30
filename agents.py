@@ -34,7 +34,7 @@ class VictoriaAgent(mg.GeoAgent):
         self.agents = {}
         
         # number of agents, will be used to visualize population density
-        self.population = len(self.agents)
+        self.population = 3
         
         self.tell = 0
         
@@ -116,6 +116,7 @@ class VictoriaAgent(mg.GeoAgent):
         ## ADD ONE SMOOTHING TO AVOID DIVISION BY ZERO
         opp = (self.resources + total_wealth)/(self.population +1)
         self.economic_opportunity = opp
+        return opp
     
     
     def resource_regrowth(self):
@@ -180,16 +181,24 @@ class VictoriaAgent(mg.GeoAgent):
         Evaluate the max, mean and standrad deviation of both gold and resources
         of the agents within each cell.
         """
+        n = 0 
         resources = []
         gold = []
-        for id in self.agents:
-            agent = self.agents[id]
-            resources.append(agent["resources"])
-            gold.append(["gold"])
-        resources = numpy.array(resources)
-        gold = numpy.array(gold)
-        self.resource_stats = [numpy.max(resources), numpy.mean(resources), numpy.std(resources)]
-        self.gold_stats = [numpy.max(resources), numpy.mean(resources), numpy.std(resources)]
+        if bool(self.agents):
+            for id in self.agents:
+                agent = self.agents[id]
+                resources.append(agent["resources"])
+                gold.append(["gold"])
+                n += 1
+            resources = numpy.array(resources)
+            gold = numpy.array(gold)
+            self.resource_stats = [numpy.max(resources), numpy.mean(resources), numpy.std(resources)]
+            self.gold_stats = [numpy.max(resources), numpy.mean(resources), numpy.std(resources)]
+            self.population = n
+        else:
+            self.resource_stats = [0,0,0]
+            self.gold_stats = [0,0,0]
+            self.population = 0
         
         
 ############### Functions Determining Actions of Indiviudals ##################
@@ -267,11 +276,11 @@ class VictoriaAgent(mg.GeoAgent):
                 gold_factor = (1/(1+numpy.exp(-self.model.gamma*gold_amount)))-0.5
                 # calculate probability of leaving to become a miner
                 probability = (resource_factor + distance_factor + gold_factor + agent["risk_factor"])/4
-                print(resource_factor)
-                print(distance_factor)
-                print(gold_factor)
-                print(probability)
-                print("----------")
+                # print(resource_factor)
+                # print(distance_factor)
+                # print(gold_factor)
+                # print(probability)
+                # print("----------")
                 if numpy.random.random() < probability:
                     agent['miner'] = True
                     agent['destination'] = -1 # cell ID extracted from loc
@@ -299,9 +308,19 @@ class VictoriaAgent(mg.GeoAgent):
     def move(self):
         for agent in self.agents:
             if self.agents[agent]['miner'] == False:
-                continue
-                # check neighbouring cells for highest economic oppportunity 
-                # move agent to that cell
+                # look for neighbouring cells for highest economic oppportunity
+                eco_opp = self.calc_econ_opp()
+                neighbors = list(self.model.space.get_neighbors_within_distance(self, distance=2))
+                max_opp = max([n.calc_econ_opp() for n in neighbors])
+                if max_opp > eco_opp and numpy.random.random() < self.agents[agent]["risk_factor"]:
+                    possible_moves = [
+                    n for n in neighbors if n.calc_econ_opp() == max_opp
+                    ]
+                    # move to cell with highest economic opp
+                    move_to = random.choice(possible_moves)
+                    # print("non-miner will move to", move_to.unique_id)
+                    self.moving_agent[agent] = move_to.unique_id
+                else: continue
             
             elif self.agents[agent]["miner"] == True:
                 if self.agents[agent]['destination'] == -1:
@@ -315,13 +334,15 @@ class VictoriaAgent(mg.GeoAgent):
                 elif self.agents[agent]["destination"] != self.unique_id:
                     # print(self.agents, agent)
                     move_to = self.gold_loc[self.agents[agent]["destination"]][2]
-                    print("miner will move to", move_to)
+                    # print("miner will move to", move_to)
                     self.moving_agent[agent] = move_to
                 
 
 ####################### Functions Advancing the Model ########################
 
     def step(self):
+
+        self.get_wealth_stats()
 
         self.information_spread_step()
         
@@ -330,21 +351,21 @@ class VictoriaAgent(mg.GeoAgent):
 
         # agents acquire resources from cells
         self.acquire_resources()
+
+        # agents consume resources or die if not in possession of any
+        self.consume_resources() # unfinished function
         
         # resources in cells regrow
         self.resource_regrowth()
+
+        # trade between agents
+        self.trade()
         
         # calculate and update economic opporunity in cells
         self.calc_econ_opp()
         
         # move agents to cells with highest economic opportunity
         self.move() # very unfinished function
-        
-        # trade between agents
-        self.trade()
-
-        # agents consume resources or die if not in possession of any
-        self.consume_resources() # unfinished function
         
         # replace dead agents randomly in new cells
 
