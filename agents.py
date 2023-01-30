@@ -133,7 +133,7 @@ class VictoriaAgent(mg.GeoAgent):
         self.resources += random.randint(5,10)
     
     
-    def information_spread_step(self, stoch = 0.5):
+    def information_spread_step(self, stoch=0.5):
         neighbors = list(self.model.space.get_neighbors_within_distance(self, distance=2))
 
         nn_neighbors = [n for n in neighbors if self.unique_id not in list(n.gold_loc.keys())]
@@ -413,7 +413,7 @@ class VictoriaAgent(mg.GeoAgent):
         self.moving_agent = dict()
 
         # Save data to file
-        self.save_step
+        self.save_step()
 
 
 ############################## Old Functions #################################
