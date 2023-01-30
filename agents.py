@@ -51,18 +51,18 @@ class VictoriaAgent(mg.GeoAgent):
         self.moving_agent = dict()
 
     def save_step(self):
-        if self.population > 0:
-            data = (
-                self.unique_id,
-                self.population,
-                self.number_of_miners,
-                self.avg_probability,
-                self.gold_stats,
-                self.resource_stats,
-                self.economic_opportunity,
-                self.resources
-            )
-            self.model.writer.writerow(data)
+
+        data = (
+            self.unique_id,
+            self.population,
+            self.number_of_miners,
+            self.avg_probability,
+            self.gold_stats,
+            self.resource_stats,
+            self.economic_opportunity,
+            self.resources
+        )
+        self.model.writer.writerow(data)
        
         
 ################# Functions Alterring Cell Properties #########################
