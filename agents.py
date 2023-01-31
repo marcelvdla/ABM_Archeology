@@ -12,9 +12,6 @@ class VictoriaAgent(mg.GeoAgent):
         
         # Gold location dictionary with elements unique_id, distance, path
         self.gold_loc = {}
-
-        # initial agents to be created in this cell
-        self.init_population = 3
         
         # amount of resources intially available to be collected
         self.resources = random.randint(20,50)
@@ -79,25 +76,7 @@ class VictoriaAgent(mg.GeoAgent):
             return [n.unique_id for n in list(self.model.space.get_neighbors_within_distance(self, distance=2)) if n.unique_id != self.unique_id]
         else:
             return list(self.model.space.get_neighbors_within_distance(self, distance=2))
-        
-    def initialize_population(self, agent_id):
-        """
-        create an intial population of agents within a cell (i.e. local environment)
-        with a global agent ID to identify them as they move between cells.
-        """
-        for _ in range(self.init_population):
-            self.agents[agent_id] = {
-                "id": agent_id,
-                "miner": False, # everyone is nonminer by default
-                "destination": -1,
-                "mining_ability": numpy.absolute(numpy.random.normal(5,2)),
-                "gold": 0,
-                "farming_ability": numpy.absolute(numpy.random.normal(5,2)),
-                "resources": 10,
-                "risk_factor": numpy.random.random()
-            }
-            agent_id += 1
-        return agent_id
+    
 
     def calc_econ_opp(self):
         """
