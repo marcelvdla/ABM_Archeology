@@ -15,9 +15,9 @@ class GeoVictoria(mesa.Model):
         self.running = True
         self.agent_id = 1
         self.minelist = []
-        self.alpha = 5
-        self.beta = 0.5
-        self.gamma = 0.1
+        self.alpha = 2
+        self.beta = 0.2
+        self.gamma = 0.001
         self.writer = csv.writer(open(f'Data/data_{file}.csv', 'w'))
         self.writer.writerow((
                             "unique_id",
@@ -51,14 +51,14 @@ class GeoVictoria(mesa.Model):
         create an intial population of agents within a cell (i.e. local environment)
         with a global agent ID to identify them as they move between cells.
         """
-        for _ in range(3):
+        for _ in range(10):
             agent.agents[self.agent_id] = {
                 "id": self.agent_id,
                 "miner": False, # everyone is nonminer by default
                 "destination": -1,
-                "mining_ability": np.absolute(np.random.normal(5,2)),
+                "mining_ability": np.random.uniform(2,4),
                 "gold": 0,
-                "farming_ability": np.absolute(np.random.normal(5,2)),
+                "farming_ability": np.random.uniform(2,4),
                 "resources": 10,
                 "risk_factor": np.random.random()
             }
