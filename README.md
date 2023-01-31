@@ -21,7 +21,10 @@ The aim of this project will be to see if we can explain the population dynamics
 * Python 3.9+
 * mesa
 * mesa-geo
-* geojson
+* pandas
+* numpy
+* random
+* matplotlib
 
 
 ## Repository structure
