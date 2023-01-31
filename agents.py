@@ -293,20 +293,20 @@ class VictoriaAgent(mg.GeoAgent):
         This function evaluates whether agents decide to trade based on 
         their individual resources and gold, and the resources of other agents.
         """
-        for id in self.agents:
-            agent = self.agents[id]
-            if agent["miner"]:
-                if agent["resources"] < 2 and agent["gold"] > 0:
-                    # trade gold with the echange rate
-                    for agent2 in self.agents:
-                        if agent2["id"] != agent["id"] and agent2["resources"] > 20:
-                            agent["resources"] += self.exchange
-                            agent["gold"] -= 1
-                            agent2["resources"] -= self.exchange
-                            agent2["gold"] += 1
-                            break
-                        else : # call move function or die ?
-                            del agent
+        if bool(self.agents):
+            for id in list(self.agents):
+                if self.agents[id]["miner"]:
+                    if self.agents[id]["resources"] < 2 and self.agents[id]["gold"] > 0:
+                        # trade gold with the echange rate
+                        for id2 in list(self.agents):
+                            if id != id2 and self.agents[id2]["resources"] > 20:
+                                self.agents[id]["resources"] += self.exchange
+                                self.agents[id]["gold"] -= 1
+                                self.agents[id2]["resources"] -= self.exchange
+                                self.agents[id2]["gold"] += 1
+                                break
+                            else : # call move function or die ?
+                                del self.agents[id]
 
     def move(self):
         
