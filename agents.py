@@ -1,7 +1,5 @@
 import mesa_geo as mg
-import random
 import numpy
-import sys
 import random
 
 class VictoriaAgent(mg.GeoAgent):
@@ -69,16 +67,12 @@ class VictoriaAgent(mg.GeoAgent):
 
 
     def set_type(self, atype, gold_size = 0):
-        # Randomly create goldmines
-        # n = random.random() 
         self.atype = atype
 
         if atype == "Gold":
             self.atype = "Gold"
             self.gold_loc['unique_id'] = [0, gold_size, self.unique_id]
             self.tell += 1
-        # else:
-        #     self.atype = "Miner"
     
     def get_neighbors(self, id=1):
         if id:
