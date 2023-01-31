@@ -1,7 +1,6 @@
 import mesa 
 import mesa_geo as mg
 import pandas as pd
-import numpy
 import csv
 
 from agents import VictoriaAgent
@@ -45,31 +44,7 @@ class GeoVictoria(mesa.Model):
             # initial population
             self.agent_id = agent.initialize_population(self.agent_id)
             self.agent_id += 1
-
-            # Add a testminer to see if it goes to the goldmine
-            # if agent.unique_id == 23 or agent.unique_id == 229:
-            #     testminer = {
-            #     "id": 0,
-            #     "miner": True,
-            #     "destination": -1,
-            #     "mining_ability": numpy.absolute(numpy.random.normal(5,2)),
-            #     "gold": 0,
-            #     "farming_ability": numpy.absolute(numpy.random.normal(5,2)),
-            #     "resources": 10,
-            #     "risk_factor": 0.5
-            #     }
-            #     agent.agents[0] = testminer
-            
             self.schedule.add(agent)
 
     def step(self):
         self.schedule.step()
-        # self.schedule.advance()
-        # self.datacollector.collect(self) # need data ?
-
-    # def run_model(self, step_count=20):
-    #     '''
-    #     Method that runs the model for a specific amount of steps.
-    #     '''
-    #     for i in range(step_count):
-    #         self.schedule.step()
