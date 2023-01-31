@@ -18,7 +18,7 @@ def victoria_draw(agent):
             f"ID: {agent.unique_id}",
             f"resources: {round(agent.resources)}",
             f"gold_resource: {agent.gold}",
-            f"init_population: {agent.init_population}",
+            # f"init_population: {agent.init_population}",
             f"agents: {agent.agents}",
             f"population: {agent.population}",
             f"economic_opportunity: {agent.economic_opportunity}"
