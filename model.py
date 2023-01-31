@@ -43,17 +43,16 @@ class GeoVictoria(mesa.Model):
                 agent.gold = 1000
 
             # initial population
-            self.agent_id = agent.initialize_population(self.agent_id)
-            self.agent_id += 1
+            self.initialize_population(agent)
             self.schedule.add(agent)
 
-    def initialize_population(self):
+    def initialize_population(self, agent):
         """
         create an intial population of agents within a cell (i.e. local environment)
         with a global agent ID to identify them as they move between cells.
         """
         for _ in range(3):
-            self.agents[self.agent_id] = {
+            agent.agents[self.agent_id] = {
                 "id": self.agent_id,
                 "miner": False, # everyone is nonminer by default
                 "destination": -1,
