@@ -61,6 +61,7 @@ plt.plot(steps, total_miners, label='number of miners')
 plt.title('Population Dynamics 1')
 plt.legend()
 plt.grid('both')
+plt.savefig("Figure-1.png") # change name
 plt.show()
 
 # Graph Max and Mean Population
@@ -69,6 +70,7 @@ plt.plot(steps, mean_population, label='mean population in a cell')
 plt.title('Population Dynamics 2')
 plt.legend()
 plt.grid('both')
+plt.savefig("Figure-2.png") # change name
 plt.show()
 
         
