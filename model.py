@@ -52,7 +52,8 @@ class GeoVictoria(mesa.Model):
         create an intial population of agents within a cell (i.e. local environment)
         with a global agent ID to identify them as they move between cells.
         """
-        for _ in range(10):
+        number_of_agents = np.random.randint(low=5,high=15)
+        for _ in range(number_of_agents):
             agent.agents[self.agent_id] = {
                 "id": self.agent_id,
                 "miner": False, # everyone is nonminer by default
