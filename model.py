@@ -60,7 +60,7 @@ class GeoVictoria(mesa.Model):
                 "gold": 0,
                 "farming_ability": np.random.uniform(2,4),
                 "resources": 10,
-                "risk_factor": np.random.random()*0.5
+                "risk_factor": np.random.random() # *0.5
             }
             self.agent_id += 1
 

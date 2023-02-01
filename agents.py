@@ -45,6 +45,8 @@ class VictoriaAgent(mg.GeoAgent):
 
         self.moving_agent = dict()
 
+        self.number_of_trades = 0
+
     def save_step(self):
 
         data = (
@@ -217,6 +219,7 @@ class VictoriaAgent(mg.GeoAgent):
                 gold_mined = numpy.absolute(numpy.random.normal(agent["mining_ability"],1))
                 if gold_mined <= self.gold:
                     agent["gold"] += gold_mined
+                    agent["resources"] -= gold_mined
                     self.gold -= gold_mined
                     
             # Non-miners and miners that haven't reached their destination farm
@@ -243,7 +246,7 @@ class VictoriaAgent(mg.GeoAgent):
                 if agent['resources'] > max_resources:
                     max_resources = agent['resources']
                 
-        prob_list = []        
+        prob_list = []
         # iterate over agents
         for id in self.agents:
             agent = self.agents[id]
@@ -256,11 +259,11 @@ class VictoriaAgent(mg.GeoAgent):
                 gold_factor = 2*((1/(1+numpy.exp(-self.model.gamma*gold_amount)))-0.5)
                 # calculate probability of leaving to become a miner
                 probability = (resource_factor*distance_factor*gold_factor*agent["risk_factor"])                   # print(resource_factor)
-                print(distance_factor)
-                print(gold_factor)
-                print(resource_factor)
-                print(probability)
-                print("----------")
+                # print(distance_factor)
+                # print(gold_factor)
+                # print(resource_factor)
+                # print(probability)
+                # print("----------")
                 prob_list.append(probability)
                 if numpy.random.random() < probability:
                     agent['miner'] = True
@@ -275,17 +278,30 @@ class VictoriaAgent(mg.GeoAgent):
         if bool(self.agents):
             for id in list(self.agents):
                 if self.agents[id]["miner"]:
-                    if self.agents[id]["resources"] < 2 and self.agents[id]["gold"] > 0:
+                    if self.agents[id]["resources"] < 5 and self.agents[id]["gold"] > 0:
                         # trade gold with the echange rate
                         for id2 in list(self.agents):
-                            if id != id2 and self.agents[id2]["resources"] > 20:
+                            if id != id2 and self.agents[id2]["resources"] > 10 and self.agents[id2]["miner"] == False:
                                 self.agents[id]["resources"] += self.exchange
                                 self.agents[id]["gold"] -= 1
                                 self.agents[id2]["resources"] -= self.exchange
                                 self.agents[id2]["gold"] += 1
+                                self.number_of_trades += 1
                                 break
-                            else : # call move function or die ?
-                                del self.agents[id]
+                            elif id != id2 and self.agents[id2]["resources"] > 10 and self.agents[id2]["miner"] == True:
+                                self.agents[id]["resources"] += 3
+                                self.agents[id]["gold"] -= 1
+                                self.agents[id2]["resources"] -= 3
+                                self.agents[id2]["gold"] += 1
+                                self.number_of_trades += 1
+                                break
+                    elif self.resources > 2*len(self.agents):
+                        self.agents[id]["miner"] = False # make miner a non miner
+                        if self.resources > 1 :
+                            resources_farmed = numpy.absolute(numpy.random.normal(self.agents[id]["farming_ability"],1))
+                            self.agents[id]["resources"] += resources_farmed
+                            self.resources -= resources_farmed
+                        else: del self.agents[id] # or die
 
     def move(self):
         
