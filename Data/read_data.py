@@ -42,10 +42,10 @@ for index, row in df.iterrows():
         
         # Plot Histogram of every Step
         n_bins = 20
-        # plt.hist(population, range=(0,50), bins=n_bins)
-        # plt.title(f"Population Desnity Step {step}")
-        # plt.ylim((0,750))
-        # plt.show()
+        plt.hist(population, range=(0,50), bins=n_bins)
+        plt.title(f"Population Desnity Step {step}")
+        plt.ylim((0,750))
+        plt.show()
         population = []
         step += 1
         
