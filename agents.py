@@ -47,6 +47,8 @@ class VictoriaAgent(mg.GeoAgent):
 
         self.number_of_trades = 0
 
+        self.time_step = 0
+
     def save_step(self):
 
         data = (
@@ -288,6 +290,7 @@ class VictoriaAgent(mg.GeoAgent):
                                 self.agents[id]["gold"] -= 1
                                 self.agents[id2]["resources"] -= self.exchange
                                 self.agents[id2]["gold"] += 1
+                                self.resources += 1
                                 self.number_of_trades += 1
                                 break
                             elif id != id2 and self.agents[id2]["resources"] > 10 and self.agents[id2]["miner"] == True:
@@ -295,6 +298,7 @@ class VictoriaAgent(mg.GeoAgent):
                                 self.agents[id]["gold"] -= 1
                                 self.agents[id2]["resources"] -= 3
                                 self.agents[id2]["gold"] += 1
+                                self.resources += 1
                                 self.number_of_trades += 1
                                 break
                     elif self.resources > 2*len(self.agents):
@@ -345,7 +349,39 @@ class VictoriaAgent(mg.GeoAgent):
                     self.moving_agent[agent] = move_to
                     
         self.number_of_miners = num_miners
-                
+
+    def gold_mine(self):
+        if self.time_step == 6 and self.unique_id == 685:
+            self.atype = "Gold"
+            self.gold = 1000
+
+        if self.time_step == 10 and self.unique_id == 635:
+            self.atype = "Gold"
+            self.gold = 1000
+
+        if self.time_step == 15 and self.unique_id == 693:
+            self.atype = "Gold"
+            self.gold = 1000
+        
+        if self.time_step == 18 and self.unique_id == 315:
+            self.atype = "Gold"
+            self.gold = 1000
+
+        if self.time_step == 21 and self.unique_id == 121:
+            self.atype = "Gold"
+            self.gold = 1000
+        
+        if self.time_step == 22 and self.unique_id == 638:
+            self.atype = "Gold"
+            self.gold = 1000
+        
+# 368,"Gold",None
+# 643,"Gold",None
+# 346,"Gold",None
+# 718,"Gold",None
+# 263,"Gold",None
+# 725,"Gold",None
+
 
 ####################### Functions Advancing the Model ########################
 
@@ -375,6 +411,8 @@ class VictoriaAgent(mg.GeoAgent):
         
         # move agents to cells with highest economic opportunity
         self.move() # very unfinished function
+
+        self.gold_mine()
         
         # replace dead agents randomly in new cells
 
@@ -405,6 +443,8 @@ class VictoriaAgent(mg.GeoAgent):
 
         # Save data to file
         self.save_step()
+
+        self.time_step += 1
 
 
 ############################## Old Functions #################################
