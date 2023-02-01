@@ -38,7 +38,7 @@ for index, row in df.iterrows():
         plt.title(f"Population Density Step {step}")
         plt.xlabel("Number of Agents")
         plt.ylabel("Number of Cells")
-        plt.ylim((0,300))
+        plt.ylim((0,150))
         plt.tight_layout()
         plt.savefig(f'population_histograms/pop_density_step_{step}.png')
         plt.show()
