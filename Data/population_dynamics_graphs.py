@@ -59,7 +59,7 @@ plt.legend()
 plt.xlabel("step")
 plt.ylabel("number of agents")
 plt.grid('both')
-# plt.savefig("global_pop_dyn") # change name
+plt.savefig("global_pop_dyn")
 plt.show()
 
 # Graph Max and Mean Population
@@ -70,7 +70,7 @@ plt.legend()
 plt.xlabel("step")
 plt.ylabel("number of agents")
 plt.grid('both')
-# plt.savefig("cell_pop_dyn") # change name
+plt.savefig("cell_pop_dyn")
 plt.show()
 
         
