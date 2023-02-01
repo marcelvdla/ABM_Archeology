@@ -45,7 +45,6 @@ for index, row in df.iterrows():
 steps = np.arange(step-1)
 plt.plot(steps, total_trades)
 plt.title('Global Trade Dynamics')
-plt.legend()
 plt.xlabel("step")
 plt.ylabel("number of trades")
 plt.grid('both')
