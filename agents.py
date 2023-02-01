@@ -14,7 +14,7 @@ class VictoriaAgent(mg.GeoAgent):
         self.gold_loc = {}
         
         # amount of resources intially available to be collected
-        self.resources = random.randint(20,50)
+        self.resources = random.randint(50,150)
         
         # initial amount of gold available
         self.gold = 0
@@ -106,7 +106,7 @@ class VictoriaAgent(mg.GeoAgent):
         """
         Increase the resources of a cell by a randomly fluctuating amount
         """
-        self.resources += random.randint(5,10)
+        self.resources += random.randint(10,20)
     
     
     def information_spread_step(self, stoch=0.5):
