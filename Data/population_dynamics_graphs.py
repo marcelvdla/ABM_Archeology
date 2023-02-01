@@ -24,11 +24,12 @@ df = pd.read_csv('./data_None.csv',delimiter=",")
 population = []
 max_population = []
 total_population = []
-mean_population = []
+
 step=1
 
 miners = []
 total_miners = []
+max_miners = []
 
 for index, row in df.iterrows():
     population.append(row[1])
@@ -39,19 +40,13 @@ for index, row in df.iterrows():
         # Population Statistics
         max_population.append(max(population))
         total_population.append(sum(population))
-        mean_population.append(np.mean(population))
-        
-        # Plot Histogram of every Step
-        n_bins = 20
-        plt.hist(population, range=(0,50), bins=n_bins)
-        plt.title(f"Population Desnity Step {step}")
-        plt.ylim((0,750))
-        plt.show()
+
         population = []
         step += 1
         
         # number of miners
         total_miners.append(sum(miners))
+        max_miners.append(max(miners))
         miners = []        
 
 
@@ -59,19 +54,23 @@ for index, row in df.iterrows():
 steps = np.arange(step-1)
 plt.plot(steps, total_population, label='population size')
 plt.plot(steps, total_miners, label='number of miners')
-plt.title('Population Dynamics 1')
+plt.title('Global Population Dynamics')
 plt.legend()
+plt.xlabel("step")
+plt.ylabel("number of agents")
 plt.grid('both')
-plt.savefig("Figure-1.png") # change name
+# plt.savefig("global_pop_dyn") # change name
 plt.show()
 
 # Graph Max and Mean Population
 plt.plot(steps, max_population, label='max population in a cell')
-plt.plot(steps, mean_population, label='mean population in a cell')
-plt.title('Population Dynamics 2')
+plt.plot(steps, max_miners, label='max miners in a cell')
+plt.title('Cell Population Dynamics')
 plt.legend()
+plt.xlabel("step")
+plt.ylabel("number of agents")
 plt.grid('both')
-plt.savefig("Figure-2.png") # change name
+# plt.savefig("cell_pop_dyn") # change name
 plt.show()
 
         
