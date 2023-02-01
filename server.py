@@ -63,6 +63,9 @@ def victoria_draw(agent):
     if agent.number_of_trades > 0:
         portrayal["color"] = "Purple"
     
+    if agent.atype == "Gold":
+        portrayal["color"] = "Yellow"
+    
     return portrayal
 
 def victoria_pop(agent):

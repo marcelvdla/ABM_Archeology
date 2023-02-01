@@ -57,7 +57,8 @@ class VictoriaAgent(mg.GeoAgent):
             self.gold_stats,
             self.resource_stats,
             self.economic_opportunity,
-            self.resources
+            self.resources,
+            self.number_of_trades
         )
         self.model.writer.writerow(data)
        
