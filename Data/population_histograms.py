@@ -35,12 +35,12 @@ for index, row in df.iterrows():
 
         # Plot Histogram of every Step
         plt.hist(population, range=(0,50), bins=n_bins)
-        plt.title(f"Population Desnity Step {step}")
-        plt.xlabel("Agent Density")
+        plt.title(f"Population Density Step {step}")
+        plt.xlabel("Number of Agents")
         plt.ylabel("Number of Cells")
         plt.ylim((0,300))
         plt.tight_layout()
-        plt.savefig(f'population_histograms/pop_desnity_step_{step}.png')
+        plt.savefig(f'population_histograms/pop_density_step_{step}.png')
         plt.show()
         population = []
         step += 1
