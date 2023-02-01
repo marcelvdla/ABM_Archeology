@@ -19,6 +19,7 @@ df = pd.read_csv('./data_None.csv',delimiter=",")
 # index 5 is list with resource statistics
 # index 6 is economic opportunity
 # index 7 is resources
+# index 8 is number of trades
 
 population = []
 max_population = []

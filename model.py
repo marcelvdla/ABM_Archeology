@@ -27,7 +27,8 @@ class GeoVictoria(mesa.Model):
                             "gold_stats",
                             "resource_stats",
                             "economic_opportunity",
-                            "resources"))
+                            "resources",
+                            "trades"))
 
         start_state = pd.read_csv("Modelstates/test.csv")
 

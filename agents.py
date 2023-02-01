@@ -260,11 +260,12 @@ class VictoriaAgent(mg.GeoAgent):
                 gold_factor = 2*((1/(1+numpy.exp(-self.model.gamma*gold_amount)))-0.5)
                 # calculate probability of leaving to become a miner
                 probability = (resource_factor*distance_factor*gold_factor*agent["risk_factor"])                   # print(resource_factor)
-                # print(distance_factor)
-                # print(gold_factor)
-                # print(resource_factor)
-                # print(probability)
-                # print("----------")
+                print(distance_factor)
+                print(gold_factor)
+                print(resource_factor)
+                print(agent["risk_factor"])
+                print(probability)
+                print("----------")
                 prob_list.append(probability)
                 if numpy.random.random() < probability:
                     agent['miner'] = True
