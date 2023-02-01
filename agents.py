@@ -14,7 +14,7 @@ class VictoriaAgent(mg.GeoAgent):
         self.gold_loc = {}
         
         # amount of resources intially available to be collected
-        self.resources = random.randint(50,150)
+        self.resources = random.randint(20,50)
         
         # initial amount of gold available
         self.gold = 0
@@ -106,7 +106,7 @@ class VictoriaAgent(mg.GeoAgent):
         """
         Increase the resources of a cell by a randomly fluctuating amount
         """
-        self.resources += random.randint(10,20)
+        self.resources += random.randint(5,10)
     
     
     def information_spread_step(self, stoch=0.5):
@@ -260,12 +260,12 @@ class VictoriaAgent(mg.GeoAgent):
                 gold_factor = 2*((1/(1+numpy.exp(-self.model.gamma*gold_amount)))-0.5)
                 # calculate probability of leaving to become a miner
                 probability = (resource_factor*distance_factor*gold_factor*agent["risk_factor"])                   # print(resource_factor)
-                print(distance_factor)
-                print(gold_factor)
-                print(resource_factor)
-                print(agent["risk_factor"])
-                print(probability)
-                print("----------")
+                # print(distance_factor)
+                # print(gold_factor)
+                # print(resource_factor)
+                # print(agent["risk_factor"])
+                # print(probability)
+                # print("----------")
                 prob_list.append(probability)
                 if numpy.random.random() < probability:
                     agent['miner'] = True
@@ -288,6 +288,7 @@ class VictoriaAgent(mg.GeoAgent):
                                 self.agents[id]["gold"] -= 1
                                 self.agents[id2]["resources"] -= self.exchange
                                 self.agents[id2]["gold"] += 1
+                                self.resources += 1
                                 self.number_of_trades += 1
                                 break
                             elif id != id2 and self.agents[id2]["resources"] > 10 and self.agents[id2]["miner"] == True:
@@ -295,6 +296,7 @@ class VictoriaAgent(mg.GeoAgent):
                                 self.agents[id]["gold"] -= 1
                                 self.agents[id2]["resources"] -= 3
                                 self.agents[id2]["gold"] += 1
+                                self.resources += 1
                                 self.number_of_trades += 1
                                 break
                     elif self.resources > 2*len(self.agents):
