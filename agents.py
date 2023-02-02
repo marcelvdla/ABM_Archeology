@@ -161,8 +161,7 @@ class VictoriaAgent(mg.GeoAgent):
             
     def get_wealth_stats(self):
         """
-        Evaluate the max, mean and standrad deviation of both gold and resources
-        of the agents within each cell.
+        Gather data of individual agents within each cell
         """
         n = 0 
         resources = []
@@ -175,12 +174,12 @@ class VictoriaAgent(mg.GeoAgent):
                 n += 1
             resources = numpy.array(resources)
             gold = numpy.array(gold)
-            self.resource_stats = [numpy.max(resources), numpy.mean(resources), numpy.std(resources)]
-            self.gold_stats = [numpy.max(resources), numpy.mean(resources), numpy.std(resources)]
+            self.resource_stats = resources
+            self.gold_stats = gold
             self.population = n
         else:
-            self.resource_stats = [0,0,0]
-            self.gold_stats = [0,0,0]
+            self.resource_stats = []
+            self.gold_stats = []
             self.population = 0
         
         
@@ -409,57 +408,4 @@ class VictoriaAgent(mg.GeoAgent):
         self.save_step()
 
 
-############################## Old Functions #################################
-    # def trade_and_move(self):
-    #     for agent in self.agents:
-    #         total_resources += agent["resource"]
-    #         if agent["miner"]:
-    #             if agent["resource"] < 2 and agent["gold"] > 0:
-    #                 # trade 1 gold for 5 resources
-    #                 for agent2 in self.agents:
-    #                     if agent2["id"] != agent["id"] and agent2["resource"] > 20:
-    #                         agent["resource"] += 5
-    #                         agent["gold"] -= 1
-    #                         agent2["resource"] -= 5
-    #                         agent2["gold"] += 1
-    #                         break
-    #                     else : 
-    #                         neighbors = list(self.model.space.get_neighbors_within_distance(self, distance=2))
-    #                         possible_steps = [move for move in neighbors if (move.resources > self.resources or move.trade_opp > self.trade_opp)]
-    #                         if len(possible_steps) > 0:
-    #                             move_to = random.choice(possible_steps)
-    #                             move_to.agents.append(agent)
-    #                             del agent
-
-    #         # is trading factor dependent on total_resources?
-    #         # maybe update trade opp ?
-
-    #         if agent.miner == True and self.gold > 0:
-    #             agent.gold += 1
-    #             self.gold -=1
-    #         elif agent.miner == False:
-    #             agent.resources += 1
-    #             self.resources -= 1
-
-
-    # def random_move_miner(self):
-    #     # Get neighbors
-    #     neighbors = list(self.model.space.get_neighbors_within_distance(self, distance=2))
-
-    #     # Random movement of miners to agents
-    #     if self.atype == "Miner":
-    #         # If already next to goldmine don't move
-    #         for n in neighbors:
-    #             if n != self:
-    #                 if n.atype == "Gold":
-    #                     self.atype = "Settled"
-    #                     return
-
-    #         # Find possible movement
-    #         possible_steps = [move for move in neighbors if move.atype == "Land"]
-    #         # Move to a random neighboring land and change agent 
-    #         if len(possible_steps) > 0:
-    #             move_to = random.choice(possible_steps)
-    #             move_to.atype = self.atype
-    #             self.atype = "Land"
 
