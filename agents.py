@@ -170,7 +170,7 @@ class VictoriaAgent(mg.GeoAgent):
             for id in self.agents:
                 agent = self.agents[id]
                 resources.append(agent["resources"])
-                gold.append(["gold"])
+                gold.append(agent["gold"])
                 n += 1
             resources = numpy.array(resources)
             gold = numpy.array(gold)
