@@ -375,9 +375,8 @@ class VictoriaAgent(mg.GeoAgent):
         self.calc_econ_opp()
         
         # move agents to cells with highest economic opportunity
-        self.move() # very unfinished function
+        self.move() 
         
-        # replace dead agents randomly in new cells
 
     # advance function
     def advance(self):
