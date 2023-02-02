@@ -29,7 +29,7 @@ class VictoriaAgent(mg.GeoAgent):
         self.agents = {}
         
         # number of agents, will be used to visualize population density
-        self.population = 3
+        self.population = 0
         
         self.number_of_miners = 0
         
@@ -152,7 +152,7 @@ class VictoriaAgent(mg.GeoAgent):
                 for k in self.gold_loc.keys():
                     # If neighbor is goldmine
                     if n.unique_id == k:
-                        self.gold_loc[k] = [1, self.gold_loc[k][1], n]
+                        self.gold_loc[k] = [1, self.gold_loc[k][1], n.unique_id]
                     # else update shortest route via neighbor
                     elif k in n.gold_loc.keys() and n.gold_loc[k][0] < self.gold_loc[k][0] - 1:
                         self.gold_loc[k] = [n.gold_loc[k][0] + 1, self.gold_loc[k][1], n.unique_id]
@@ -181,6 +181,16 @@ class VictoriaAgent(mg.GeoAgent):
             self.resource_stats = []
             self.gold_stats = []
             self.population = 0
+    
+    def count_miners(self):
+        num_miners = 0
+        if bool(self.agents):
+            for id in self.agents:
+                if self.agents[id]["miner"] == True:
+                    num_miners += 1
+        
+        self.number_of_miners = num_miners
+        
         
         
 ############### Functions Determining Actions of Indiviudals ##################
@@ -250,7 +260,7 @@ class VictoriaAgent(mg.GeoAgent):
         Move Miner to next step to reach destination
         """
         move_to = self.gold_loc[self.agents[agent_id]["destination"]][2]
-        self.moving_agent[self.agents[agent_id]] = move_to
+        self.moving_agent[agent_id] = move_to
     
     
     def move_non_miner(self, agent_id):
@@ -368,6 +378,7 @@ class VictoriaAgent(mg.GeoAgent):
             # calculate probability of leaving to become a miner
             probability = (resource_factor*distance_factor*gold_factor*self.agents[agent_id]["risk_factor"])
             if numpy.random.random() < probability:
+                self.agents[agent_id]["destination"] = loc
                 return True
             else:
                 return False
@@ -407,6 +418,8 @@ class VictoriaAgent(mg.GeoAgent):
         self.moving_agent = dict()
         
         self.population = len(self.agents) # update population
+        
+        self.count_miners()
         
         self.get_wealth_stats()
         
