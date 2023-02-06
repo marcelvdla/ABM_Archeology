@@ -3,13 +3,13 @@ import numpy
 import random
 
 class VictoriaAgent(mg.GeoAgent):
-    def __init__(self, unique_id, model, geometry, crs, atype=None):
+    def __init__(self, unique_id, model, geometry, crs):
         """
         Create Local Environment containing resources and agents.
         """
         super().__init__(unique_id, model, geometry, crs)
         self.model = model
-        
+
         # Gold location dictionary with elements unique_id, distance, path
         self.gold_loc = {}
         
@@ -48,7 +48,6 @@ class VictoriaAgent(mg.GeoAgent):
         self.number_of_trades = 0
 
     def save_step(self):
-
         data = (
             self.unique_id,
             self.population,
@@ -109,7 +108,7 @@ class VictoriaAgent(mg.GeoAgent):
         self.resources += random.randint(5,10)
     
     
-    def information_spread_step(self, stoch=0.5):
+    def information_spread_step(self):
         neighbors = list(self.model.space.get_neighbors_within_distance(self, distance=2))
 
         nn_neighbors = [n for n in neighbors if self.unique_id not in list(n.gold_loc.keys())]
@@ -117,7 +116,7 @@ class VictoriaAgent(mg.GeoAgent):
         if self.atype == "Gold" and self.tell == 1:
             # Tell neighbors I have gold
             for n in nn_neighbors:
-                if n != self and random.random() < stoch:
+                if n != self and random.random() < self.model.stoch:
                     n.gold_loc[self.unique_id] = [1, self.gold, self.unique_id]
                     n.tell += 1
             
@@ -127,7 +126,7 @@ class VictoriaAgent(mg.GeoAgent):
         elif self.atype == "Land" and self.tell == 2:
             # Check if I can tell neighbors where gold is
             for n in nn_neighbors:
-                if n.tell == 0 and random.random() < stoch:
+                if n.tell == 0 and random.random() < self.model.stoch:
                     n.tell += 1
                     for k in self.gold_loc.keys():
                         if k not in list(n.gold_loc.keys()):
