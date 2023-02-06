@@ -4,6 +4,9 @@ from SALib.sample import saltelli
 from SALib.analyze import sobol
 
 import sys
+import time
+import warnings
+
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -73,10 +76,8 @@ def get_data_sobol(problem, replicates, max_steps, distinct_samples):
             batch.run_iteration(variable_parameters, tuple(vals), count)
             iteration_data = batch.get_model_vars_dataframe().iloc[count]
             iteration_data['Run'] = count # Don't know what causes this, but iteration number is not correctly filled
-            print(data)
             data.iloc[count, 0:4] = vals
             data.iloc[count, 4:8] = iteration_data
-            print(data)
             count += 1
 
             # clear_output()
@@ -177,6 +178,8 @@ def plot_index(s, params, i, title=''):
 
 
 if __name__ == "__main__":
+    warnings.filterwarnings("ignore", category=RuntimeWarning) 
+    
     problem = {
         'num_vars': 4,
         'names': ['stoch', 'alpha', 'beta', 'gamma'],
@@ -188,9 +191,13 @@ if __name__ == "__main__":
     max_steps = int(sys.argv[3])
     distinct_samples = int(sys.argv[4])
 
+    start = time.time()
+
     if sbl:
         data = get_data_sobol(problem, replicates, max_steps, distinct_samples)
         data['gini'] = [gini(np.array(p)) for p in data['Population']]
+
+        end = time.time()
 
         data.to_csv('Data/SA_sobol.csv')
 
@@ -206,8 +213,13 @@ if __name__ == "__main__":
     else:
         data = get_data(problem, replicates, max_steps, distinct_samples)
 
+        end = time.time()
+
         for k in data:
+            data[k]['gini'] = [gini(np.array(p)) for p in data[k]['Population']]
             data[k].to_csv(f'Data/SA_OFAT_{k}.csv')
         
         plot_all_vars(data, 'gini', problem)
         plt.show()
+
+    print(f'Time taken to get data: {(end - start)/60} minutes')

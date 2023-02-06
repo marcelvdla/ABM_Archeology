@@ -55,7 +55,7 @@ class GeoVictoria(mesa.Model):
         """
         # number_of_agents = np.random.randint(low=5,high=15)
         # for _ in range(number_of_agents):
-        for i in range(10):
+        for i in range(3):
             agent.agents[self.agent_id] = {
                 "id": self.agent_id,
                 "miner": False, # everyone is nonminer by default
