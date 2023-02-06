@@ -386,31 +386,34 @@ class VictoriaAgent(mg.GeoAgent):
                 return False
                 
     def gold_mine(self):
-        if self.time_step == 6 and self.unique_id == 685:
+        if self.time_step == 4 and self.unique_id == 685:
             self.atype = "Gold"
             self.gold = 1000
 
-        if self.time_step == 10 and self.unique_id == 635:
+        if self.time_step == 6 and self.unique_id == 635:
             self.atype = "Gold"
             self.gold = 1000
 
-        if self.time_step == 15 and self.unique_id == 693:
+        if self.time_step == 9 and self.unique_id == 693:
             self.atype = "Gold"
             self.gold = 1000
         
-        if self.time_step == 18 and self.unique_id == 315:
+        if self.time_step == 12 and self.unique_id == 315:
             self.atype = "Gold"
             self.gold = 1000
 
-        if self.time_step == 21 and self.unique_id == 121:
+        if self.time_step == 15 and self.unique_id == 121:
             self.atype = "Gold"
             self.gold = 1000
         
-        if self.time_step == 22 and self.unique_id == 638:
+        if self.time_step == 19 and self.unique_id == 638:
             self.atype = "Gold"
             self.gold = 1000
         
-# 368,"Gold",None
+        if self.time_step == 21 and self.unique_id == 368:
+            self.atype = "Gold"
+            self.gold = 1000
+        
 # 643,"Gold",None
 # 346,"Gold",None
 # 718,"Gold",None

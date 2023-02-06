@@ -48,7 +48,7 @@ for index, row in df.iterrows():
         # plt.ylim((0,150))
         plt.tight_layout()
         # plt.savefig(f'economic_opp_histograms/eco_opp_step_{step}.png')
-        plt.show()
+        # plt.show()
         economic_opp = []
         step += 1
 
@@ -69,7 +69,7 @@ plt.title('Total Economic Opportunity')
 plt.xlabel("step")
 plt.ylabel("Economic Opportunity")
 plt.grid('both')
-# plt.savefig("total_eco_opp_dyn")
+plt.savefig("total_eco_opp_dyn")
 plt.show()
 
 # Graph Max and Mean Eco Opp
@@ -80,5 +80,5 @@ plt.legend()
 plt.xlabel("step")
 plt.ylabel("Economic Opportunity")
 plt.grid('both')
-# plt.savefig("max_avg_eco_opp_dyn")
+plt.savefig("max_avg_eco_opp_dyn")
 plt.show()

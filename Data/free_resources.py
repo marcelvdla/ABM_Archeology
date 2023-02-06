@@ -52,7 +52,7 @@ for index, row in df.iterrows():
         # plt.ylim((0,150))
         plt.tight_layout()
         # plt.savefig(f'free_resources_histograms/free_res_step_{step}.png')
-        plt.show()
+        # plt.show()
         free_resources = []
         step += 1
 
@@ -73,7 +73,7 @@ plt.title('Total Free Resources')
 plt.xlabel("step")
 plt.ylabel("Free Resources")
 plt.grid('both')
-# plt.savefig("total_free_res_dyn")
+plt.savefig("total_free_res_dyn")
 plt.show()
 
 # Graph Max and Mean Eco Opp
@@ -84,5 +84,5 @@ plt.legend()
 plt.xlabel("step")
 plt.ylabel("Free Resources")
 plt.grid('both')
-# plt.savefig("max_avg_free_res_dyn")
+plt.savefig("max_avg_free_res_dyn")
 plt.show()
