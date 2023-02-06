@@ -9,15 +9,16 @@ from agents import VictoriaAgent
 class GeoVictoria(mesa.Model):
     """ Model class for the Victoria Gold rush model """  
 
-    def __init__(self, file=None):
+    def __init__(self, stoch=0.5, alpha=2, beta=0.1, gamma=0.001, file=None):
         self.schedule = mesa.time.SimultaneousActivation(self)
         self.space = mg.GeoSpace(warn_crs_conversion=False)
         self.running = True
         self.agent_id = 1
         self.minelist = []
-        self.alpha = 2 # 1, 3, 0.5
-        self.beta = 0.2 # 1, 3
-        self.gamma = 0.001 # 0.05, 0
+        self.stoch = stoch
+        self.alpha = alpha
+        self.beta = beta
+        self.gamma = gamma
         self.writer = csv.writer(open(f'Data/data_{file}.csv', 'w'))
         self.writer.writerow((
                             "unique_id",
