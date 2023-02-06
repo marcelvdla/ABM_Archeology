@@ -15,9 +15,9 @@ class GeoVictoria(mesa.Model):
         self.running = True
         self.agent_id = 1
         self.minelist = []
-        self.alpha = 2
-        self.beta = 0.2
-        self.gamma = 0.001
+        self.alpha = 2 # 1, 3, 0.5
+        self.beta = 0.2 # 1, 3
+        self.gamma = 0.001 # 0.05, 0
         self.writer = csv.writer(open(f'Data/data_{file}.csv', 'w'))
         self.writer.writerow((
                             "unique_id",
@@ -54,7 +54,7 @@ class GeoVictoria(mesa.Model):
         """
         # number_of_agents = np.random.randint(low=5,high=15)
         # for _ in range(number_of_agents):
-        for i in range(10):
+        for i in range(3):
             agent.agents[self.agent_id] = {
                 "id": self.agent_id,
                 "miner": False, # everyone is nonminer by default
