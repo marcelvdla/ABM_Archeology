@@ -56,3 +56,8 @@ for i in range(1, iterations +1):
     
     all_gini_gold.append(gini_gold)
     all_miner_fraction_gold.append(miner_fraction_gold)
+
+
+# plot average and gini and miners for gold and no gold
+
+# plot boxplot final gini values and do significance test
