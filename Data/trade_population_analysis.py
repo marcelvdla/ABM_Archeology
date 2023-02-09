@@ -13,7 +13,9 @@ import numpy as np
 from scipy.stats import ttest_ind
 
 """
-
+This file collects data from all iterations of the experiment, plotting the
+number of trades occuring in a cell aginst it's population. All cells where no
+trade occurs are excluded.'
 """
 
 iterations = 20
