@@ -11,6 +11,15 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.stats import ttest_ind
 
+"""
+This file reads the data from the 20 iterations of the experiment as well as 
+the control experiment and plots the avergae gini coefficient of both 
+experiments as well as the fraction of miners of the experiment against the 
+number of steps taken in the model. Furthermore a boxplot is created comparing 
+the values of gini coefficient at the final step. Lastly a Significance test
+is performed between the data sets of final gini coefficients.
+"""
+
 def gini(x):
     total = 0
     for i, xi in enumerate(x[:-1], 1):
