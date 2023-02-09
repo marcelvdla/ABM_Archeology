@@ -6,6 +6,10 @@ from model import GeoVictoria
 
 # Define model parameters
 model_params = {
+    "stoch": mesa.visualization.Slider("rate of information spreading", 0.5, 0.5, 1.0, 0.1),
+    "alpha": mesa.visualization.Slider("alpha", 0.7, 0.5, 1.0, 0.05),
+    "beta": mesa.visualization.Slider("beta", 2.0, 1.0, 10.0, 1.0),
+    "gamma": mesa.visualization.Slider("gamma", 0.0005, 0.0001, 0.001, 0.0001)
 }
 
 def victoria_draw(agent):
@@ -68,6 +72,27 @@ def victoria_draw(agent):
     
     return portrayal
 
+def victoria_info(agent):
+    portrayal = {
+        "description":[
+            f"Agent type: {agent.atype}", 
+            f"ID: {agent.unique_id}",
+            f"resources: {round(agent.resources)}",
+            f"gold_resource: {agent.gold}"
+        ],
+        "weight":2
+    }
+
+    if agent.atype == "Land":
+        if agent.gold_loc != {} and agent.atype != "Gold":
+            portrayal["color"] = "Green"
+        else:
+            portrayal["color"] = "Grey"
+    elif agent.atype == "Gold":
+        portrayal["color"] = "Yellow"
+    
+    return portrayal
+
 def victoria_pop(agent):
     color_dict = {
         5: "#030303",
@@ -109,6 +134,12 @@ def victoria_pop(agent):
 
 map_element = mg.visualization.MapModule(
     victoria_draw, [-37,145], 7, 1000, 750)
+
+info_map_element = mg.visualization.MapModule(
+    victoria_info, [-37,145], 7, 1000, 750)
+
+gini_chart = mesa.visualization.ChartModule([{"Label": "gini", "Color": "Black"}])
+
 server = mesa.visualization.ModularServer(
-    GeoVictoria, [map_element], "Victoria", model_params
+    GeoVictoria, [map_element, gini_chart], "Victoria", model_params
 )
