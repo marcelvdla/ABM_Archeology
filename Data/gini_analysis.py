@@ -27,9 +27,9 @@ all_miner_fraction_no_gold = []
 
 for i in range(1, iterations +1):
 
-    df_gold = pd.read_csv(f'./runs_with_gold/data_None_{i}.csv',delimiter=",")
+    df_gold = pd.read_csv(f'./experiment/data_None_{i}.csv',delimiter=",")
     
-    df_no_gold = pd.read_csv(f'./runs_without_gold/data_None_{i}.csv',delimiter=",")
+    df_no_gold = pd.read_csv(f'./control_experiment/data_None_{i}.csv',delimiter=",")
     
     # index 0 is cell_number
     # index 1 is population
@@ -112,7 +112,7 @@ plt.grid('both')
 plt.xlabel("Step Number")
 plt.ylabel("[-]")
 plt.tight_layout()
-plt.savefig('final_results.pdf', format="pdf")
+plt.savefig('gini_coefficient_plot.pdf', format="pdf")
 plt.show()
 
 # plot boxplot final gini values and do significance test
@@ -126,7 +126,7 @@ fig, ax = plt.subplots()
 ax.boxplot(my_dict.values())
 ax.set_xticklabels(my_dict.keys())
 ax.grid(axis='both')
-fig.savefig('boxplot.pdf', format="pdf")
+fig.savefig('boxplot_final_gini.pdf', format="pdf")
 
 # Perform significance tests 
 
