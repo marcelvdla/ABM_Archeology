@@ -30,12 +30,15 @@ class GeoVictoria(mesa.Model):
                             "economic_opportunity",
                             "resources",
                             "trades"))
+        self.datacollector = mesa.DataCollector({"gini": "gini"})
 
         start_state = pd.read_csv("Modelstates/test.csv")
 
         ac = mg.AgentCreator(VictoriaAgent, model=self)
         agents = ac.from_file("Shapefiles/victoria_hex.geojson")
         self.space.add_agents(agents)
+
+        pop_list = []
 
         for agent in agents:
             if agent.unique_id in list(start_state["unique_id"]):
@@ -47,6 +50,9 @@ class GeoVictoria(mesa.Model):
             # initial population
             self.initialize_population(agent)
             self.schedule.add(agent)
+            pop_list.append(agent.population)
+        
+        self.gini = self.gini_coef(np.array(pop_list))
 
     def initialize_population(self, agent):
         """
@@ -68,5 +74,14 @@ class GeoVictoria(mesa.Model):
             }
             self.agent_id += 1
 
+    def gini_coef(self, x):
+        total = 0
+        for i, xi in enumerate(x[:-1], 1):
+            total += np.sum(np.abs(xi - x[i:]))
+        return total / (len(x)**2 * np.mean(x))
+
+
     def step(self):
         self.schedule.step()
+        self.gini = self.gini_coef(np.array([a.population for a in self.schedule.agents]))
+        self.datacollector.collect(self)
