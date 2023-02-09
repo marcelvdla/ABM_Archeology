@@ -140,5 +140,5 @@ fig.savefig('boxplot_final_gini.pdf', format="pdf")
 # Perform significance tests 
 
 statistic, p_value = ttest_ind(final_gini_gold, final_gini_no_gold, equal_var=False)
-print(statistic)
-print(p_value)
+print("statistic = ", statistic)
+print("p value = ", p_value)
