@@ -204,25 +204,33 @@ class VictoriaAgent(mg.GeoAgent):
             agent = self.agents[agent_id]
             agent["resources"] -= 1
             
+            # If miner has enough resources and is not at his destination his priority is to get there
             if agent["miner"] == True and agent["destination"] != self.unique_id and agent["resources"] > threshold:
-                # move miner to next cell
+                
+                # move miner to next cell on his way to the designated goldmine
                 self.move_miner(agent_id)
                  
-            
+            # If the miner does not have sufficient resources on his way he becomes a farmer once again and behaves as such
             elif agent["miner"] == True and agent["destination"] != self.unique_id and agent["resources"] < threshold:
+                
                 # Stops being a miner
                 agent["miner"] = False
-                # Check if miner can farm
+                
+                # Check if agent can farm
                 succesful_farm = self.farm(agent_id)
-                # If succesfull in farming farm else move
+                
+                # If succesfull in farming continue with next agent
+                # If unsuccesful move to cell with highest economic opportunity with probability of agent's risk factor
                 if succesful_farm:
                     continue
                 else:
                     self.move_non_miner(agent_id)
 
-            
+            # If miner is at designated mine and has sufficient resources he tries to extract gold
             elif agent["miner"] == True and agent["destination"] == self.unique_id and agent["resources"] > threshold:
-                # try mining
+                
+                # if agent is succesfull at mining conitnue with next agent
+                # else (if mine is depleated) agent turns to farmer again
                 succesful_mine = self.mine(agent_id)
                 if succesful_mine:
                     continue
@@ -230,18 +238,23 @@ class VictoriaAgent(mg.GeoAgent):
                     agent["miner"] = False
                     
             
+            # If miner is at designated mine but doesn't have sufficient resources he first tries to trade his gold
             elif agent["miner"] == True and agent["destination"] == self.unique_id and agent["resources"] < threshold:
+                
+                # if trade is successful at trading continue with next agent
+                # else agent becomes a farmer and moves to cell with highest economic opportunity with probability of agent's risk factor
                 succesful_trade = self.trade(agent_id)
                 if succesful_trade:
                     continue
                 else:
-                    # otherwise move to next best cell
-                    # should they try farm first?
                     agent["miner"] = False
                     self.move_non_miner(agent_id)
 
-                
+            # Farmer with sufficient resources is checked for turning miner first    
             elif agent["miner"] == False and agent["resources"] > threshold:
+                
+                # If agent doesn't become a miner he moves to cell with highest economic opportunity with probability of agent's risk factor
+                # If this move doesn't occur he attempts to farm 
                 turn_miner = self.turn_miner(agent_id)
                 if turn_miner:
                     agent["miner"] = True
@@ -251,7 +264,8 @@ class VictoriaAgent(mg.GeoAgent):
                         continue
                     else:
                         succesful_farm = self.farm(agent_id)
-                    
+            
+            # Farmer with too little resources tries to farm for survival
             elif agent["miner"] == False and agent["resources"] < threshold:
                 succesful_farm = self.farm(agent_id)
                 
