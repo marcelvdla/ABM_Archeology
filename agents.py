@@ -30,26 +30,19 @@ class VictoriaAgent(mg.GeoAgent):
         
         # number of agents, will be used to visualize population density
         self.population = 0
-        
         self.number_of_miners = 0
-        
         self.avg_probability = 0
-        
         self.tell = 0
-        
         self.resource_stats = []
-        
         self.gold_stats = []
-        
         self.atype = "Land"
-
         self.moving_agent = dict()
-
         self.number_of_trades = 0
-
         self.time_step = 0
 
     def save_step(self):
+        """ Writes cell information to csv at every step
+        """
         data = (
             self.unique_id,
             self.population,
@@ -68,6 +61,8 @@ class VictoriaAgent(mg.GeoAgent):
 
 
     def set_type(self, atype, gold_size = 0):
+        """ set the agent type to given type, if goldmine add goldmine properties
+        """
         self.atype = atype
 
         if atype == "Gold":
@@ -76,6 +71,8 @@ class VictoriaAgent(mg.GeoAgent):
             self.tell += 1
     
     def get_neighbors(self, id=1):
+        """ Get list of neigboring cells, either its' ID or agent object
+        """
         if id:
             return [n.unique_id for n in list(self.model.space.get_neighbors_within_distance(self, distance=2)) if n.unique_id != self.unique_id]
         else:
@@ -111,6 +108,8 @@ class VictoriaAgent(mg.GeoAgent):
     
     
     def information_spread_step(self):
+        """ Telling neighbors information on goldmines during the step method of the scheduler
+        """
         neighbors = list(self.model.space.get_neighbors_within_distance(self, distance=2))
 
         nn_neighbors = [n for n in neighbors if self.unique_id not in list(n.gold_loc.keys())]
@@ -137,6 +136,8 @@ class VictoriaAgent(mg.GeoAgent):
                             n.gold_loc[k] = [distance, gold_size, self.unique_id]
 
     def information_spread_advance(self):
+        """ Telling neighbors information on goldmines during the advance method of the scheduler
+        """
         neighbors = list(self.model.space.get_neighbors_within_distance(self, distance=2))
 
         if self.atype == "Land" and self.tell == 1:
@@ -184,6 +185,8 @@ class VictoriaAgent(mg.GeoAgent):
             self.population = 0
     
     def count_miners(self):
+        """ Update the number of miners in the population of the cell
+        """
         num_miners = 0
         if bool(self.agents):
             for id in self.agents:
@@ -426,12 +429,6 @@ class VictoriaAgent(mg.GeoAgent):
         if self.time_step == 21 and self.unique_id == 368:
             self.atype = "Gold"
             self.gold = 1000
-        
-# 643,"Gold",None
-# 346,"Gold",None
-# 718,"Gold",None
-# 263,"Gold",None
-# 725,"Gold",None
 
 
 ####################### Functions Advancing the Model ########################
