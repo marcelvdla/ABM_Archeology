@@ -75,6 +75,8 @@ class GeoVictoria(mesa.Model):
             self.agent_id += 1
 
     def gini_coef(self, x):
+        """ Compute gini coefficient for population x
+        """
         total = 0
         for i, xi in enumerate(x[:-1], 1):
             total += np.sum(np.abs(xi - x[i:]))
