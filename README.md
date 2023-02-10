@@ -1,4 +1,4 @@
-# Historic population dynamics in Victoria, Australia in the late 18th, early 19th century
+# Historic population dynamics in Victoria, Australia in the late 19th century
 
 
 <p align="center">
@@ -24,7 +24,12 @@ The aim of this project will be to see if we can explain the population dynamics
 * pandas
 * numpy
 * random
+* itertools
 * matplotlib
+* SALib
+
+## Guide
+To run the model, first clone the repository to your local machine. Then from the main folder run the command 'mesa runserver'. You will be asked to choose between the base model, which shows the population density, or the information spreading visualization. Type either M or I to see either model respectively. 
 
 
 ## Repository structure
@@ -41,4 +46,5 @@ The aim of this project will be to see if we can explain the population dynamics
 |experiment.py | Can be run with 'experiment.py filename iters', where it saves all data to data_filename.csv for iters number of steps. | 
 |model.py | Python file that contains the extension for the mesa Model class. | 
 |run.py | Python file that uses the server to run the visualization part of the model. |
+|sensitivity.py | Python file that contains the function used to run sensitivity analysis | 
 |server.py | Python file that creates the server which runs the visualization part of the model. | 
