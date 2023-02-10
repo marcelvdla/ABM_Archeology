@@ -30,8 +30,6 @@ def get_data(problem, replicates, max_steps, distinct_samples):
         
         # Keep in mind that wolf_gain_from_food should be integers. You will have to change
         # your code to acommodate for this or sample in such a way that you only get integers.
-        # if var == 'wolf_gain_from_food':
-        #     samples = np.linspace(*problem['bounds'][i], num=distinct_samples, dtype=int)
         
         batch = BatchRunner(GeoVictoria, 
                             max_steps=max_steps,
@@ -51,6 +49,7 @@ def get_data_sobol(problem, replicates, max_steps, distinct_samples):
     
     # We get all our samples here
     param_values = saltelli.sample(problem, distinct_samples, calc_second_order=False)
+    print(param_values)
 
     # READ NOTE BELOW CODE
     batch = BatchRunner(GeoVictoria, 
@@ -209,7 +208,7 @@ if __name__ == "__main__":
 
         # Total order
         plot_index(Si_pop, problem['names'], 'T', 'Total order sensitivity')
-        plt.show()
+        plt.show()  
     else:
         data = get_data(problem, replicates, max_steps, distinct_samples)
 
